@@ -2,21 +2,34 @@ package com.cg.bean;
 
 import java.time.LocalDate;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
 public class Product {
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long productId;
 	private String productName;
 	private String category;
 	private String description;
 	private String brand; 
 	private String color;
-	private String size;
+	private String prodSize;
 	private String mrp;
 	private int discount;
 	private double priceAfterDiscount;
 	private boolean inStock;
 	private LocalDate estimatedDelivery;
-	public Product(long productId, String productName, String category, String description, String brand, String color,
-			String size, String mrp, int discount, double priceAfterDiscount, boolean inStock,
+	public Product() {
+		super();
+	}	
+	
+	//Constructor with id
+	public Product( long productId, String productName, String category, String description, String brand, String color,
+			String prodSize, String mrp, int discount, double priceAfterDiscount, boolean inStock,
 			LocalDate estimatedDelivery) {
 		super();
 		this.productId = productId;
@@ -25,13 +38,31 @@ public class Product {
 		this.description = description;
 		this.brand = brand;
 		this.color = color;
-		this.size = size;
+		this.prodSize = prodSize;
 		this.mrp = mrp;
 		this.discount = discount;
 		this.priceAfterDiscount = priceAfterDiscount;
 		this.inStock = inStock;
 		this.estimatedDelivery = estimatedDelivery;
 	}
+	
+	//Constructor without id
+	public Product(String productName, String category, String description, String brand, String color, String prodSize,
+			String mrp, int discount, double priceAfterDiscount, boolean inStock, LocalDate estimatedDelivery) {
+		super();
+		this.productName = productName;
+		this.category = category;
+		this.description = description;
+		this.brand = brand;
+		this.color = color;
+		this.prodSize = prodSize;
+		this.mrp = mrp;
+		this.discount = discount;
+		this.priceAfterDiscount = priceAfterDiscount;
+		this.inStock = inStock;
+		this.estimatedDelivery = estimatedDelivery;
+	}
+
 	public long getProductId() {
 		return productId;
 	}
@@ -68,11 +99,11 @@ public class Product {
 	public void setColor(String color) {
 		this.color = color;
 	}
-	public String getSize() {
-		return size;
+	public String getprodSize() {
+		return prodSize;
 	}
-	public void setSize(String size) {
-		this.size = size;
+	public void setprodSize(String prodSize) {
+		this.prodSize = prodSize;
 	}
 	public String getMrp() {
 		return mrp;
@@ -107,7 +138,7 @@ public class Product {
 	@Override
 	public String toString() {
 		return "Product [productId=" + productId + ", productName=" + productName + ", category=" + category
-				+ ", description=" + description + ", brand=" + brand + ", color=" + color + ", size=" + size + ", mrp="
+				+ ", description=" + description + ", brand=" + brand + ", color=" + color + ", prodSize=" + prodSize + ", mrp="
 				+ mrp + ", discount=" + discount + ", priceAfterDiscount=" + priceAfterDiscount + ", inStock=" + inStock
 				+ ", estimatedDelivery=" + estimatedDelivery + "]";
 	}
