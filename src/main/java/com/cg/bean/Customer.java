@@ -4,21 +4,21 @@ import java.time.LocalDate;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Entity
-public class Customer {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long userId;
+public class Customer extends User {
+	
 	private String name;
 	private String email;
 	private String contactNo;
+	
+	// @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	private  LocalDate dob;
-	@OneToOne(cascade = CascadeType.ALL)
+	
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	private Address address;
 	
 	// Constructors
@@ -26,8 +26,9 @@ public class Customer {
 		super();
 	}
 	
-	public Customer(String name, String email, String contactNo, LocalDate dob, Address address) {
-		super();
+	public Customer(String username, String password, String role, String name, String email, String contactNo,
+			LocalDate dob, Address address) {
+		super(username, password, role);
 		this.name = name;
 		this.email = email;
 		this.contactNo = contactNo;
@@ -36,14 +37,6 @@ public class Customer {
 	}
 
 	// Getters and Setters
-	public long getUserId() {
-		return userId;
-	}
-
-	public void setUserId(long userId) {
-		this.userId = userId;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -83,12 +76,11 @@ public class Customer {
 	public void setAddress(Address address) {
 		this.address = address;
 	}
-	
-	// toString
+
 	@Override
 	public String toString() {
-		return "Customer [userId=" + userId + ", name=" + name + ", email=" + email + ", contactNo=" + contactNo
-				+ ", dob=" + dob + ", address=" + address + "]";
+		return "Customer [name=" + name + ", email=" + email + ", contactNo=" + contactNo + ", dob=" + dob
+				+ ", address=" + address + "]";
 	}
-	
+		
 }
