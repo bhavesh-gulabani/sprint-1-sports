@@ -10,7 +10,7 @@ public class Address {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int addressId;
+	private int id;
 	private String doorNo;
 	private String street;
 	private String area;
@@ -34,6 +34,14 @@ public class Address {
 	}
 	
 	// Getters and Setters
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+	
 	public String getDoorNo() {
 		return doorNo;
 	}

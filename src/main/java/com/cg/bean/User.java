@@ -14,7 +14,7 @@ import javax.persistence.Table;
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long userId;
+	private long id;
 	private String username;
 	private String password;
 	private String role;
@@ -32,12 +32,12 @@ public class User {
 	}
 
 	// Getters and setters
-	public long getUserId() {
-		return userId;
+	public long getId() {
+		return id;
 	}
-	
-	public void setUserId(long userId) {
-		this.userId = userId;
+
+	public void setId(long id) {
+		this.id = id;
 	}
 	
 	public String getUsername() {
@@ -63,11 +63,10 @@ public class User {
 	public void setRole(String role) {
 		this.role = role;
 	}
-		
+
 	// toString
 	@Override
 	public String toString() {
-		return "User [userId=" + userId + ", username=" + username + ", password=" + password + ", role=" + role + "]";
-	}
-	
+		return "User [id=" + id + ", username=" + username + ", password=" + password + ", role=" + role + "]";
+	}	
 }
