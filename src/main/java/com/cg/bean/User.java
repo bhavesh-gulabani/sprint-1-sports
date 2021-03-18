@@ -9,8 +9,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "System_User")
-@Inheritance(strategy=InheritanceType.JOINED)
+@Table(name = "System_user")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -64,7 +64,6 @@ public class User {
 		this.role = role;
 	}
 
-	// toString
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", username=" + username + ", password=" + password + ", role=" + role + "]";

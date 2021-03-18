@@ -23,10 +23,9 @@ public class CustomerServiceImpl implements ICustomerService {
 		Customer customerToBeRemoved = getCustomer(custId);
 		customerRepo.deleteById(custId);
 		return customerToBeRemoved;
-		
 	}
 
-	public Customer updateCustomer(long custId, Customer customer) {
+	public Customer updateCustomer(Customer customer) {
 		return customerRepo.save(customer);
 	}
 
@@ -39,5 +38,4 @@ public class CustomerServiceImpl implements ICustomerService {
 		List<Customer> customerList = (List<Customer>) customerRepo.findAll();
 		return customerList;
 	}
-
 }
