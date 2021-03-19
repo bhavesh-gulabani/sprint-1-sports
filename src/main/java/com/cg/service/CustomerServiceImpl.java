@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.cg.bean.Customer;
 import com.cg.dao.ICustomerRepository;
+import com.cg.exception.CustomerNotFoundException;
 
 @Service
 public class CustomerServiceImpl implements ICustomerService {
@@ -19,7 +20,7 @@ public class CustomerServiceImpl implements ICustomerService {
 		return customerRepo.save(customer);
 	}
 
-	public Customer removeCustomer(long custId) {
+	public Customer removeCustomer(long custId) throws CustomerNotFoundException {
 		Customer customerToBeRemoved = getCustomer(custId);
 		customerRepo.deleteById(custId);
 		return customerToBeRemoved;
@@ -29,9 +30,9 @@ public class CustomerServiceImpl implements ICustomerService {
 		return customerRepo.save(customer);
 	}
 
-	public Customer getCustomer(long userId) {
+	public Customer getCustomer(long userId) throws CustomerNotFoundException {
 		Optional<Customer> custOptional = customerRepo.findById(userId);
-		return custOptional.isEmpty() ? null : custOptional.get();
+		return custOptional.orElseThrow(() -> new CustomerNotFoundException("Customer details not found"));
 	}
 
 	public List<Customer> getAllCustomers() {

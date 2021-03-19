@@ -1,3 +1,5 @@
+//Exception handling in service layer - responsibility of service layer
+
 package com.cg.controller;
 
 import java.util.List;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cg.bean.Customer;
+import com.cg.exception.CustomerNotFoundException;
 import com.cg.service.ICustomerService;
 
 @RestController
@@ -32,7 +35,7 @@ public class AdminController {
 	// WORKING
 	// Get a single customer by id
 	@GetMapping("admin/customers/{id}")
-	public ResponseEntity<Customer> getCustomer(@PathVariable Integer id) {
+	public ResponseEntity<Customer> getCustomer(@PathVariable Integer id) throws CustomerNotFoundException { 
 		return new ResponseEntity<>(customerService.getCustomer(id), HttpStatus.OK);
 	}
 }

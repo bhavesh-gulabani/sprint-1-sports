@@ -14,6 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Entity
 @Table(name = "System_order")
 public class Order {
@@ -21,10 +23,24 @@ public class Order {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	private double amount;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	private LocalDate billingDate;
 	
+	// Cart will contain the Product -> Quantity for that product
+	// Then based on that cart, we can calculate the total amount for the order
+	
+//	@CollectionTable(name="Product_Quantity", joinColumns=@JoinColumn(name="product_qty"))
+//	@Column(name="student_name")
 	@ElementCollection
 	Map<Product, Integer> cart;
+	
+// Best approach : 
+//	In one order, how many products are ordered?
+//	Map<Integer, Product> ProductId -> ProductObject
+//							(key)		(value)
+// quantity as a single variable for every product
+// Inside product class, quantity will be a field
+	
 
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	private Payment payment;

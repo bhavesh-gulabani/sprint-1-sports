@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cg.bean.Customer;
 import com.cg.bean.User;
+import com.cg.exception.CustomerNotFoundException;
 import com.cg.service.ICustomerService;
 import com.cg.service.IUserService;
 
@@ -40,12 +41,14 @@ public class CustomerController extends WebSecurityConfigurerAdapter {
 		return new ResponseEntity<>(customerService.addCustomer(customer), HttpStatus.CREATED);
 	}
 	
+	// WORKING
 	// Customer sign in
 	@PostMapping("/customer/signin")
 	public ResponseEntity<User> customerSignIn(@RequestBody User user) {	
 		return new ResponseEntity<User>(userService.signIn(user), HttpStatus.OK);
 	}
 	
+	// WORKING
 	// Customer sign out
 	@PostMapping("/customer/signout")
 	public ResponseEntity<User> customerSignOut(@RequestBody User user) {	
@@ -55,7 +58,7 @@ public class CustomerController extends WebSecurityConfigurerAdapter {
 	// WORKING
 	// Update customer details 
 	@PutMapping("/customer/update")
-	public ResponseEntity<Customer> updateCustomer(@RequestBody Customer customer) {
+	public ResponseEntity<Customer> updateCustomer(@RequestBody Customer customer) throws CustomerNotFoundException {
 		if (customerService.getCustomer(customer.getId()) != null) {
 			return new ResponseEntity<>(customerService.updateCustomer(customer), HttpStatus.OK); 	
 		} else
@@ -63,15 +66,13 @@ public class CustomerController extends WebSecurityConfigurerAdapter {
 	}
 	
 	// WORKING
-	// Remove a customer (DELETE)
+	// Remove a customer
 	@DeleteMapping("/customer/delete/{id}")
-	public ResponseEntity<Customer> deleteCustomer(@PathVariable Integer id) {
+	public ResponseEntity<Customer> deleteCustomer(@PathVariable Integer id) throws CustomerNotFoundException {
 		
 		Customer removedCustomer = customerService.removeCustomer(id);
 		
 		return removedCustomer == null ? new ResponseEntity<>(null, HttpStatus.NOT_FOUND) : 
 			new ResponseEntity<>(removedCustomer, HttpStatus.OK);	
 	}
-	
-	
 }

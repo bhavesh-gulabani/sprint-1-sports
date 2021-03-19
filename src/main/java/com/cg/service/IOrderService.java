@@ -9,6 +9,5 @@ public interface IOrderService {
 	public Order removeOrder(long id);
 	public Order  updateOrder(long id, Order order);
 	public Order  getOrderDetails(long id);
-	public List<Order> getAllOrders(); 
-
+	public List<Order> getAllOrders();
 }
