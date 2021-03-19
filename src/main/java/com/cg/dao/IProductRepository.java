@@ -1,8 +1,8 @@
 package com.cg.dao;
 
-import java.util.List;
+import org.springframework.data.repository.CrudRepository;
 
 import com.cg.bean.Product;
 
-public interface IProductRepository {
+public interface IProductRepository extends CrudRepository<Product, Long>{
 }

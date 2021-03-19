@@ -8,6 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Entity
 @Table(name = "System_product")
 public class Product {
@@ -24,6 +26,7 @@ public class Product {
 	private int discount;
 	private double priceAfterDiscount;
 	private int inStock;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	private LocalDate estimatedDelivery;
 	
 	// Constructors
@@ -45,6 +48,14 @@ public class Product {
 		this.priceAfterDiscount = priceAfterDiscount;
 		this.inStock = inStock;
 		this.estimatedDelivery = estimatedDelivery;
+	}
+	
+	
+
+	public Product(long id, String name) {
+		super();
+		this.id = id;
+		this.name = name;
 	}
 
 	// Getters and Setters

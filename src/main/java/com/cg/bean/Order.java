@@ -1,3 +1,13 @@
+// Best approach : 
+//	In one order, how many products are ordered?
+//	Map<Integer, Product> ProductId -> ProductObject
+//							(key)		(value)
+// quantity as a single variable for every product
+// Inside product class, quantity will be a field
+
+
+//	@CollectionTable(name="Product_Quantity", joinColumns=@JoinColumn(name="product_qty"))
+//	@Column(name="student_name")
 package com.cg.bean;
 
 import java.time.LocalDate;
@@ -5,8 +15,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,25 +40,17 @@ public class Order {
 	
 	// Cart will contain the Product -> Quantity for that product
 	// Then based on that cart, we can calculate the total amount for the order
-	
-//	@CollectionTable(name="Product_Quantity", joinColumns=@JoinColumn(name="product_qty"))
-//	@Column(name="student_name")
+	@CollectionTable(name="System_Order_Cart")
 	@ElementCollection
 	Map<Product, Integer> cart;
 	
-// Best approach : 
-//	In one order, how many products are ordered?
-//	Map<Integer, Product> ProductId -> ProductObject
-//							(key)		(value)
-// quantity as a single variable for every product
-// Inside product class, quantity will be a field
+	// Bi-directional many-to-one (Owning side)
+	@ManyToOne(cascade = CascadeType.ALL)
+	private Customer customer;
 	
-
+	// Bi-directional One-to-One (Owning side)
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	private Payment payment;
-	
-	@ManyToOne
-	private Customer customer;
 
 	// Constructors
 	public Order() {
@@ -54,12 +58,11 @@ public class Order {
 		cart = new HashMap<>();
 	}
 	
-	public Order(double amount, LocalDate billingDate, Map<Product, Integer> cart, Payment payment, Customer customer) {
+	public Order(double amount, LocalDate billingDate, Map<Product, Integer> cart, Customer customer) {
 		super();
 		this.amount = amount;
 		this.billingDate = billingDate;
 		this.cart = cart;
-		this.payment = payment;
 		this.customer = customer;
 	}
 
@@ -88,13 +91,7 @@ public class Order {
 		this.billingDate = billingDate;
 	}
 
-	public Payment getPayment() {
-		return payment;
-	}
 
-	public void setPayment(Payment payment) {
-		this.payment = payment;
-	}
 
 	public Customer getCustomer() {
 		return customer;
@@ -106,7 +103,8 @@ public class Order {
 
 	@Override
 	public String toString() {
-		return "Order [id=" + id + ", amount=" + amount + ", billingDate=" + billingDate + ", payment=" + payment
+		return "Order [id=" + id + ", amount=" + amount + ", billingDate=" + billingDate + ", cart=" + cart
 				+ ", customer=" + customer + "]";
 	}
+
 }

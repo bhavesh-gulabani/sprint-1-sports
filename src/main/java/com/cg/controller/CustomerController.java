@@ -6,11 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cg.bean.Customer;
@@ -20,6 +20,7 @@ import com.cg.service.ICustomerService;
 import com.cg.service.IUserService;
 
 @RestController
+@RequestMapping("/customer")
 public class CustomerController extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
@@ -36,28 +37,28 @@ public class CustomerController extends WebSecurityConfigurerAdapter {
 	
 	// WORKING
 	// Register a new customer 
-	@PostMapping("/customer/register")
+	@PostMapping("/register")
 	public ResponseEntity<Customer> registerCustomer(@RequestBody Customer customer) {	
 		return new ResponseEntity<>(customerService.addCustomer(customer), HttpStatus.CREATED);
 	}
 	
 	// WORKING
 	// Customer sign in
-	@PostMapping("/customer/signin")
+	@PostMapping("/signin")
 	public ResponseEntity<User> customerSignIn(@RequestBody User user) {	
 		return new ResponseEntity<User>(userService.signIn(user), HttpStatus.OK);
 	}
 	
 	// WORKING
 	// Customer sign out
-	@PostMapping("/customer/signout")
+	@PostMapping("/signout")
 	public ResponseEntity<User> customerSignOut(@RequestBody User user) {	
 		return new ResponseEntity<User>(userService.signOut(user), HttpStatus.OK);
 	}
 	
 	// WORKING
 	// Update customer details 
-	@PutMapping("/customer/update")
+	@PutMapping("/update")
 	public ResponseEntity<Customer> updateCustomer(@RequestBody Customer customer) throws CustomerNotFoundException {
 		if (customerService.getCustomer(customer.getId()) != null) {
 			return new ResponseEntity<>(customerService.updateCustomer(customer), HttpStatus.OK); 	
@@ -67,7 +68,7 @@ public class CustomerController extends WebSecurityConfigurerAdapter {
 	
 	// WORKING
 	// Remove a customer
-	@DeleteMapping("/customer/delete/{id}")
+	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<Customer> deleteCustomer(@PathVariable Integer id) throws CustomerNotFoundException {
 		
 		Customer removedCustomer = customerService.removeCustomer(id);

@@ -15,28 +15,23 @@ public class OrderServiceImpl implements IOrderService {
 	@Autowired
 	IOrderRepository orderRepository;
 	
-	
 	public Order addOrder(Order order) {
 		return orderRepository.save(order);
 	}
 
-	
 	public Order removeOrder(long id) {
-		Order remo = getOrderDetails(id);
+		Order orderToBeRemoved = getOrderDetails(id);
 		orderRepository.deleteById(id);
-		return remo;
+		return orderToBeRemoved;
 	}
 
-	
 	public Order updateOrder(long id, Order order) {
 		return orderRepository.save(order);
 	}	
 
-	
 	public Order getOrderDetails(long id) {
 		Optional<Order> orderOptional = orderRepository.findById(id);
 		return orderOptional.isEmpty() ? null : orderOptional.get();
-		
 	}
 
 	@Override

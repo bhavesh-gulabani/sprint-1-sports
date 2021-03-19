@@ -1,6 +1,7 @@
 package com.cg.bean;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -8,7 +9,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -26,27 +26,36 @@ public class Customer extends User {
 	@Embedded
 	private Address address;
 	
-	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-	private Payment payment;
-	
-	@OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
-	private Set<Order> orders;
+	// Bi-directional one-to-many (Inverse side)
+	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+	private Set<Order> orders = new HashSet<>();
 	
 	// Constructors
 	public Customer() {
 		super();
 	}
-
-	public Customer(String username, String password, String role, String name, String email, String contactNo, LocalDate dateOfBirth, Address address, Payment payment,
+	
+	public Customer(String name, String email, String contactNo, LocalDate dateOfBirth, Address address,
 			Set<Order> orders) {
-		super(username, password, role);
+		super();
 		this.name = name;
 		this.email = email;
 		this.contactNo = contactNo;
 		this.dateOfBirth = dateOfBirth;
 		this.address = address;
-		this.payment = payment;
 		this.orders = orders;
+	}
+
+	public Customer(String username, String password, String role, String name, String email) {
+		super(username, password, role);
+		this.name = name;
+		this.email = email;
+	}
+	
+	public Customer(String name, String email) {
+		super();
+		this.name = name;
+		this.email = email;
 	}
 
 	// Getters and Setters
@@ -97,18 +106,15 @@ public class Customer extends User {
 	public void setOrders(Set<Order> orders) {
 		this.orders = orders;
 	}
-	
-	public Payment getPayment() {
-		return payment;
-	}
 
-	public void setPayment(Payment payment) {
-		this.payment = payment;
+	public void setDateOfBirth(LocalDate dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
 	}
 
 	@Override
 	public String toString() {
 		return "Customer [name=" + name + ", email=" + email + ", contactNo=" + contactNo + ", dateOfBirth="
-				+ dateOfBirth + ", address=" + address + ", payment=" + payment + ", orders=" + orders + "]";
+				+ dateOfBirth + ", address=" + address + ", orders=" + orders + "]";
 	}
+
 }
