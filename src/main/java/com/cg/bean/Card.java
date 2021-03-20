@@ -2,6 +2,7 @@ package com.cg.bean;
 
 import java.time.LocalDate;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,7 +18,8 @@ public class Card {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	private String name;
-	private String cardNumber;		// as Number is a keyword in Oracle, so named cardNumber
+	@Column(name = "card_number")
+	private String number;
 	
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate expiry;
@@ -31,7 +33,7 @@ public class Card {
     public Card(String name, String number, LocalDate expiry, int cvv) {
 		super();
 		this.name = name;
-		this.cardNumber = number;
+		this.number = number;
 		this.expiry = expiry;
 		this.cvv = cvv;
 	}
@@ -53,12 +55,12 @@ public class Card {
 		this.name = name;
 	}
 
-	public String getCardNumber() {
-		return cardNumber;
+	public String getNumber() {
+		return number;
 	}
 
-	public void setCardNumber(String number) {
-		this.cardNumber = number;
+	public void setNumber(String number) {
+		this.number = number;
 	}
 
 	public LocalDate getExpiry() {
@@ -79,7 +81,7 @@ public class Card {
 
 	@Override
 	public String toString() {
-		return "Card [id=" + id + ", name=" + name + ", number=" + cardNumber + ", expiry=" + expiry + ", cvv=" + cvv + "]";
+		return "Card [id=" + id + ", name=" + name + ", number=" + number + ", expiry=" + expiry + ", cvv=" + cvv + "]";
 	}
 	
 }

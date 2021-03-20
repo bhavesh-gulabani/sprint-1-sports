@@ -10,14 +10,18 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "System_customer")
 public class Customer extends User {
-	
+	@NotBlank
 	private String name;
+	@Email(message = "Email should be valid")
 	private String email;
 	private String contactNo;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
@@ -26,8 +30,8 @@ public class Customer extends User {
 	@Embedded
 	private Address address;
 	
-	// Bi-directional one-to-many (Inverse side)
-	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+	// Bidirectional one-to-many (Inverse side)
+	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<Order> orders = new HashSet<>();
 	
 	// Constructors
@@ -98,7 +102,8 @@ public class Customer extends User {
 	public void setAddress(Address address) {
 		this.address = address;
 	}
-
+	
+	@JsonManagedReference(value = "customerReference")
 	public Set<Order> getOrders() {
 		return orders;
 	}
@@ -109,6 +114,13 @@ public class Customer extends User {
 
 	public void setDateOfBirth(LocalDate dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
+	}
+	
+	// To add order to the customer
+	// Also serves the purpose to avoid cyclic references 
+	public void addOrder(Order order) {
+		order.setCustomer(this);				// To avoid nested cascade
+		this.getOrders().add(order);
 	}
 
 	@Override

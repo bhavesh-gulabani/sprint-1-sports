@@ -1,12 +1,15 @@
 package com.cg.bean;
 
 import javax.persistence.Embeddable;
+import javax.validation.constraints.Size;
 
 @Embeddable
 public class Address {
 
 	private String doorNo;
+	@Size(min = 5, max = 20, message = "Street should be between 5 to 30 characters")
 	private String street;
+	@Size(min = 5, max = 15, message = "Area should be between 5 to 15 characters")
 	private String area;
 	private String city;
 	private String state;

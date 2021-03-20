@@ -1,5 +1,7 @@
 package com.cg.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +40,7 @@ public class CustomerController extends WebSecurityConfigurerAdapter {
 	// WORKING
 	// Register a new customer 
 	@PostMapping("/register")
-	public ResponseEntity<Customer> registerCustomer(@RequestBody Customer customer) {	
+	public ResponseEntity<Customer> registerCustomer(@Valid @RequestBody Customer customer) {	
 		return new ResponseEntity<>(customerService.addCustomer(customer), HttpStatus.CREATED);
 	}
 	
@@ -59,21 +61,15 @@ public class CustomerController extends WebSecurityConfigurerAdapter {
 	// WORKING
 	// Update customer details 
 	@PutMapping("/update")
-	public ResponseEntity<Customer> updateCustomer(@RequestBody Customer customer) throws CustomerNotFoundException {
-		if (customerService.getCustomer(customer.getId()) != null) {
-			return new ResponseEntity<>(customerService.updateCustomer(customer), HttpStatus.OK); 	
-		} else
-			return new ResponseEntity<>(customer, HttpStatus.BAD_REQUEST);
+	public ResponseEntity<Customer> updateCustomer(@Valid @RequestBody Customer customer) throws CustomerNotFoundException {
+		return new ResponseEntity<>(customerService.updateCustomer(customer), HttpStatus.OK); 	
 	}
 	
 	// WORKING
 	// Remove a customer
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<Customer> deleteCustomer(@PathVariable Integer id) throws CustomerNotFoundException {
-		
-		Customer removedCustomer = customerService.removeCustomer(id);
-		
-		return removedCustomer == null ? new ResponseEntity<>(null, HttpStatus.NOT_FOUND) : 
-			new ResponseEntity<>(removedCustomer, HttpStatus.OK);	
+		return new ResponseEntity<>(customerService.removeCustomer(id), HttpStatus.OK);	
 	}
+
 }

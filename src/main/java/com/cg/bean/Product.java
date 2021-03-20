@@ -2,6 +2,7 @@ package com.cg.bean;
 
 import java.time.LocalDate;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,7 +22,8 @@ public class Product {
 	private String description;
 	private String brand; 
 	private String color;
-	private String productSize;
+	@Column(name = "product_size")
+	private String size;
 	private double mrp;
 	private int discount;
 	private double priceAfterDiscount;
@@ -34,7 +36,7 @@ public class Product {
 		super();
 	}
 	
-	public Product(String name, String category, String description, String brand, String color, String productSize,
+	public Product(String name, String category, String description, String brand, String color, String size,
 			double mrp, int discount, double priceAfterDiscount, int inStock, LocalDate estimatedDelivery) {
 		super();
 		this.name = name;
@@ -42,7 +44,7 @@ public class Product {
 		this.description = description;
 		this.brand = brand;
 		this.color = color;
-		this.productSize = productSize;
+		this.size = size;
 		this.mrp = mrp;
 		this.discount = discount;
 		this.priceAfterDiscount = priceAfterDiscount;
@@ -50,8 +52,6 @@ public class Product {
 		this.estimatedDelivery = estimatedDelivery;
 	}
 	
-	
-
 	public Product(long id, String name) {
 		super();
 		this.id = id;
@@ -107,12 +107,12 @@ public class Product {
 		this.color = color;
 	}
 
-	public String getProductSize() {
-		return productSize;
+	public String getSize() {
+		return size;
 	}
 
-	public void setProductSize(String productSize) {
-		this.productSize = productSize;
+	public void setSize(String size) {
+		this.size = size;
 	}
 
 	public double getMrp() {
@@ -155,10 +155,11 @@ public class Product {
 		this.estimatedDelivery = estimatedDelivery;
 	}
 
+	@Override
 	public String toString() {
 		return "Product [id=" + id + ", name=" + name + ", category=" + category + ", description=" + description
-				+ ", brand=" + brand + ", color=" + color + ", productSize=" + productSize + ", mrp=" + mrp
-				+ ", discount=" + discount + ", priceAfterDiscount=" + priceAfterDiscount + ", inStock=" + inStock
-				+ ", estimatedDelivery=" + estimatedDelivery + "]";
+				+ ", brand=" + brand + ", color=" + color + ", size=" + size + ", mrp=" + mrp + ", discount=" + discount
+				+ ", priceAfterDiscount=" + priceAfterDiscount + ", inStock=" + inStock + ", estimatedDelivery="
+				+ estimatedDelivery + "]";
 	}
 }

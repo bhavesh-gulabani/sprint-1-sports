@@ -14,18 +14,18 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
@@ -38,35 +38,40 @@ public class Order {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	private LocalDate billingDate;
 	
-	// Cart will contain the Product -> Quantity for that product
+	// Cart will contain the productId -> quantity for that product
 	// Then based on that cart, we can calculate the total amount for the order
 	@CollectionTable(name="System_Order_Cart")
 	@ElementCollection
-	Map<Product, Integer> cart;
+	Map<Integer, Integer> cart = new HashMap<>();
 	
-	// Bi-directional many-to-one (Owning side)
-	@ManyToOne(cascade = CascadeType.ALL)
+	// We can get product details from productId the key of the map,
+	// and we can perform operations
+	
+	// Bidirectional many-to-one (Owning side)
+	@ManyToOne
+	@JoinColumn(name = "customer_id")
 	private Customer customer;
 	
-	// Bi-directional One-to-One (Owning side)
-	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+	// Bidirectional one-to-one (Owning side)
+	@OneToOne
+	@JoinColumn(name = "payment_id")
 	private Payment payment;
 
 	// Constructors
 	public Order() {
 		super();
-		cart = new HashMap<>();
 	}
 	
-	public Order(double amount, LocalDate billingDate, Map<Product, Integer> cart, Customer customer) {
+	public Order(double amount, LocalDate billingDate, Map<Integer, Integer> cart, Customer customer, Payment payment) {
 		super();
 		this.amount = amount;
 		this.billingDate = billingDate;
 		this.cart = cart;
 		this.customer = customer;
+		this.payment = payment;
 	}
 
-	// Getters and Setters
+	// Getters and Setters	
 	public long getId() {
 		return id;
 	}
@@ -82,6 +87,14 @@ public class Order {
 	public void setAmount(double amount) {
 		this.amount = amount;
 	}
+	
+	public Map<Integer, Integer> getCart() {
+		return cart;
+	}
+
+	public void setCart(Map<Integer, Integer> cart) {
+		this.cart = cart;
+	}
 
 	public LocalDate getBillingDate() {
 		return billingDate;
@@ -91,8 +104,7 @@ public class Order {
 		this.billingDate = billingDate;
 	}
 
-
-
+	@JsonBackReference(value = "customerReference")
 	public Customer getCustomer() {
 		return customer;
 	}
@@ -101,10 +113,19 @@ public class Order {
 		this.customer = customer;
 	}
 
+	@JsonBackReference(value = "paymentReference")
+	public Payment getPayment() {
+		return payment;
+	}
+
+	public void setPayment(Payment payment) {
+		this.payment = payment;
+	}
+
 	@Override
 	public String toString() {
 		return "Order [id=" + id + ", amount=" + amount + ", billingDate=" + billingDate + ", cart=" + cart
-				+ ", customer=" + customer + "]";
+				+ ", customer=" + customer + ", payment=" + payment + "]";
 	}
 
 }
