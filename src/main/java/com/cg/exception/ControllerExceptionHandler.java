@@ -29,4 +29,18 @@ public class ControllerExceptionHandler {
 		ErrorDetail errorDetail = new ErrorDetail(new Date(), ex.getMessage(), request.getDescription(false));
 		return new ResponseEntity<>(errorDetail, HttpStatus.NOT_FOUND);
 	}
+	
+	@ResponseBody
+	@ExceptionHandler(IncorrectPriceException.class)
+	ResponseEntity<?> IncorrectPriceException(IncorrectPriceException ex, WebRequest request) {
+		ErrorDetail errorDetail = new ErrorDetail(new Date(), ex.getMessage(), request.getDescription(false));
+		return new ResponseEntity<>(errorDetail, HttpStatus.NOT_FOUND);
+	}
+	
+	@ResponseBody
+	@ExceptionHandler(EmptyInventoryException.class)
+	ResponseEntity<?> EmptyInventoryException(EmptyInventoryException ex, WebRequest request) {
+		ErrorDetail errorDetail = new ErrorDetail(new Date(), ex.getMessage(), request.getDescription(false));
+		return new ResponseEntity<>(errorDetail, HttpStatus.NOT_FOUND);
+	}
 }

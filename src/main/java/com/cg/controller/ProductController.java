@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cg.bean.Product;
+import com.cg.exception.CustomerNotFoundException;
+import com.cg.exception.EmptyInventoryException;
+import com.cg.exception.IncorrectPriceException;
 import com.cg.exception.ProductNotFoundException;
 import com.cg.service.IProductService;
 
@@ -35,48 +38,53 @@ protected void configure(HttpSecurity http) throws Exception {
 }
 
 @PostMapping("/add")
-public ResponseEntity<Product> addProduct(@RequestBody Product product){
+public ResponseEntity<Product> addProduct(@RequestBody Product product) throws IncorrectPriceException{
 	productService.addProduct(product);
 	return new ResponseEntity<Product>(product, HttpStatus.CREATED);
 }
 
 @GetMapping("/getall")
-public ResponseEntity<List<Product>>getAllProd(){
+public ResponseEntity<List<Product>>getAllProd() throws EmptyInventoryException{
 	List <Product>productList= productService.getAllProduct();
 	return new ResponseEntity<List<Product>>(productList, HttpStatus.OK); 
 	}
 
+@GetMapping("/getbyid/{id}")
+public ResponseEntity<Product>getProductById(@PathVariable long id) throws ProductNotFoundException{
+	Product product= productService.getProductById(id);
+	return new ResponseEntity<Product>(product, HttpStatus.OK); 
+	}
+
 @DeleteMapping("/delete/{id}") 
-public String deleteProduct(@PathVariable long id) throws ProductNotFoundException{ 
-	productService.removeProduct(id); 
-	return "Deleted by id"; 
+public String deleteProduct(@PathVariable long id) throws ProductNotFoundException{  
+	return productService.removeProduct(id); 
 }	
  
 @PutMapping("/update")
-public ResponseEntity<Product> updateProduct(@RequestBody Product product) throws ProductNotFoundException{
+public ResponseEntity<Product> updateProduct(@RequestBody Product product) throws ProductNotFoundException, IncorrectPriceException{
 	productService.updateProduct(product.getId(), product);
 	return new ResponseEntity<Product>(product, HttpStatus.OK);
 }
 
 @GetMapping("/getbyname/{name}")
-public ResponseEntity<List<Optional<Product>>>getByName(@PathVariable String name){
+public ResponseEntity<List<Optional<Product>>>getByName(@PathVariable String name) throws ProductNotFoundException{
 	List<Optional<Product>> product = productService.getProductsByName(name);
 	return new ResponseEntity<List<Optional<Product>>>(product, HttpStatus.OK);
 }
 
 @GetMapping("/getbysize/{size}")
-public ResponseEntity<List<Optional<Product>>>getBySize(@PathVariable String size){
+public ResponseEntity<List<Optional<Product>>>getBySize(@PathVariable String size) throws ProductNotFoundException{
 	List<Optional<Product>> product = productService.getProductsBySize(size);
 	return new ResponseEntity<List<Optional<Product>>>(product, HttpStatus.OK);
 }
 
 @GetMapping("/getbyprice/{mrp}")
-public ResponseEntity<List<Optional<Product>>>getByPrice(@PathVariable double mrp){
+public ResponseEntity<List<Optional<Product>>>getByPrice(@PathVariable double mrp) throws ProductNotFoundException{
 	List<Optional<Product>> product = productService.getProductsByMrp(mrp);
 	return new ResponseEntity<List<Optional<Product>>>(product, HttpStatus.OK);
 }
 @GetMapping("/getbycolor/{color}")
-public ResponseEntity<List<Optional<Product>>>getByColor(@PathVariable String color){
+public ResponseEntity<List<Optional<Product>>>getByColor(@PathVariable String color) throws ProductNotFoundException{
 	List<Optional<Product>> product = productService.getProductsByColor(color);
 	return new ResponseEntity<List<Optional<Product>>>(product, HttpStatus.OK);
 }
