@@ -1,49 +1,57 @@
 package com.cg.bean;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
-public class Customer {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long userId;
+@Table(name = "System_customer")
+public class Customer extends User {
+	
 	private String name;
 	private String email;
 	private String contactNo;
-	private  LocalDate dob;
-	@OneToOne(cascade = CascadeType.ALL)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+	private  LocalDate dateOfBirth;
+	
+	@Embedded
 	private Address address;
+	
+	// Bi-directional one-to-many (Inverse side)
+	@OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
+	private Set<Order> orders = new HashSet<>();
 	
 	// Constructors
 	public Customer() {
 		super();
 	}
 	
-	public Customer(String name, String email, String contactNo, LocalDate dob, Address address) {
+	public Customer(String name, String email, String contactNo, LocalDate dateOfBirth, Address address,
+			Set<Order> orders) {
 		super();
 		this.name = name;
 		this.email = email;
 		this.contactNo = contactNo;
-		this.dob = dob;
+		this.dateOfBirth = dateOfBirth;
 		this.address = address;
+		this.orders = orders;
+	}
+
+	public Customer(String username, String password, String role, String name, String email) {
+		super(username, password, role);
+		this.name = name;
+		this.email = email;
 	}
 
 	// Getters and Setters
-	public long getUserId() {
-		return userId;
-	}
-
-	public void setUserId(long userId) {
-		this.userId = userId;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -68,12 +76,12 @@ public class Customer {
 		this.contactNo = contactNo;
 	}
 
-	public LocalDate getDob() {
-		return dob;
+	public LocalDate getDateOfBirth() {
+		return dateOfBirth;
 	}
 
-	public void setDob(LocalDate dob) {
-		this.dob = dob;
+	public void setDob(LocalDate dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
 	}
 
 	public Address getAddress() {
@@ -83,12 +91,23 @@ public class Customer {
 	public void setAddress(Address address) {
 		this.address = address;
 	}
-	
-	// toString
+
+	public Set<Order> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(Set<Order> orders) {
+		this.orders = orders;
+	}
+
+	public void setDateOfBirth(LocalDate dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
+	}
+
 	@Override
 	public String toString() {
-		return "Customer [userId=" + userId + ", name=" + name + ", email=" + email + ", contactNo=" + contactNo
-				+ ", dob=" + dob + ", address=" + address + "]";
+		return "Customer [name=" + name + ", email=" + email + ", contactNo=" + contactNo + ", dateOfBirth="
+				+ dateOfBirth + ", address=" + address + ", orders=" + orders + "]";
 	}
-	
+
 }

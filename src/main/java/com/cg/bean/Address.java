@@ -1,16 +1,10 @@
 package com.cg.bean;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.Embeddable;
 
-@Entity
+@Embeddable
 public class Address {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int addressId;
 	private String doorNo;
 	private String street;
 	private String area;
@@ -34,6 +28,7 @@ public class Address {
 	}
 	
 	// Getters and Setters
+	
 	public String getDoorNo() {
 		return doorNo;
 	}
