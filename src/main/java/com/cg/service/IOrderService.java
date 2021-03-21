@@ -12,4 +12,5 @@ public interface IOrderService {
 	public Order getOrderDetails(long id);
 	public List<Order> getAllOrders();
 	public Order computeTotalAmount(Order order);
+	public Order confirmOrder(Order order);
 }

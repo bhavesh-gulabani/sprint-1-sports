@@ -10,8 +10,8 @@ import com.cg.exception.CustomerNotFoundException;
 @Service
 public interface ICustomerService {
 	public Customer addCustomer(Customer customer);
-	public Customer removeCustomer(long custId) throws CustomerNotFoundException;
-	public Customer updateCustomer(Customer customer);
-	public Customer getCustomer(long custId) throws CustomerNotFoundException;
+	public Customer removeCustomer(long id) throws CustomerNotFoundException;
+	public Customer updateCustomer(Customer customer) throws CustomerNotFoundException;
+	public Customer getCustomer(long id) throws CustomerNotFoundException;
 	public List<Customer> getAllCustomers(); 
 }

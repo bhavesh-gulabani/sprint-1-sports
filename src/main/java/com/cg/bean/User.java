@@ -6,14 +6,18 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+// For generating values of user id (customer and admin)
+@SequenceGenerator(name = "userSequence", initialValue = 101, allocationSize = 1)
 
 @Entity
 @Table(name = "System_user")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "userSequence")
 	private long id;
 	private String username;
 	private String password;

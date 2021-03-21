@@ -3,6 +3,8 @@ package com.cg.service;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +12,7 @@ import com.cg.bean.Payment;
 import com.cg.dao.IPaymentRepository;
 
 @Service
+@Transactional
 public class PaymentServiceImpl implements IPaymentService {
 
 	@Autowired
@@ -43,6 +46,4 @@ public class PaymentServiceImpl implements IPaymentService {
 		List<Payment> paymentList = (List<Payment>) paymentRepository.findAll();
 		return paymentList;
 	}
-	
-
 }

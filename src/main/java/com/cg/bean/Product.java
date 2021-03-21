@@ -7,15 +7,19 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+
+//For generating values of product id
+@SequenceGenerator(name = "productSequence", initialValue = 201, allocationSize = 1)
 
 @Entity
 @Table(name = "System_product")
 public class Product {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "productSequence")
 	private long id;
 	private String name;
 	private String category;
@@ -27,7 +31,7 @@ public class Product {
 	private double mrp;
 	private int discount;
 	private double priceAfterDiscount;
-	private int inStock;
+	private int stock;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	private LocalDate estimatedDelivery;
 	
@@ -37,7 +41,7 @@ public class Product {
 	}
 	
 	public Product(String name, String category, String description, String brand, String color, String size,
-			double mrp, int discount, double priceAfterDiscount, int inStock, LocalDate estimatedDelivery) {
+			double mrp, int discount, int stock, LocalDate estimatedDelivery) {
 		super();
 		this.name = name;
 		this.category = category;
@@ -47,15 +51,9 @@ public class Product {
 		this.size = size;
 		this.mrp = mrp;
 		this.discount = discount;
-		this.priceAfterDiscount = priceAfterDiscount;
-		this.inStock = inStock;
+		this.priceAfterDiscount = mrp - ((double)discount * (mrp / 100));
+		this.stock = stock;
 		this.estimatedDelivery = estimatedDelivery;
-	}
-	
-	public Product(long id, String name) {
-		super();
-		this.id = id;
-		this.name = name;
 	}
 
 	// Getters and Setters
@@ -132,6 +130,7 @@ public class Product {
 	}
 
 	public double getPriceAfterDiscount() {
+		priceAfterDiscount = mrp - ((double)discount * (mrp / 100));
 		return priceAfterDiscount;
 	}
 
@@ -139,12 +138,12 @@ public class Product {
 		this.priceAfterDiscount = priceAfterDiscount;
 	}
 
-	public int getInStock() {
-		return inStock;
+	public int getStock() {
+		return stock;
 	}
 
-	public void setInStock(int inStock) {
-		this.inStock = inStock;
+	public void setStock(int stock) {
+		this.stock = stock;
 	}
 
 	public LocalDate getEstimatedDelivery() {
@@ -159,7 +158,7 @@ public class Product {
 	public String toString() {
 		return "Product [id=" + id + ", name=" + name + ", category=" + category + ", description=" + description
 				+ ", brand=" + brand + ", color=" + color + ", size=" + size + ", mrp=" + mrp + ", discount=" + discount
-				+ ", priceAfterDiscount=" + priceAfterDiscount + ", inStock=" + inStock + ", estimatedDelivery="
+				+ ", priceAfterDiscount=" + priceAfterDiscount + ", stock=" + stock + ", estimatedDelivery="
 				+ estimatedDelivery + "]";
 	}
 }

@@ -7,15 +7,19 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+
+//For generating values of card id
+@SequenceGenerator(name = "cardSequence", initialValue = 501, allocationSize = 1)
 
 @Entity
 @Table(name = "System_card")
 public class Card {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cardSequence")
 	private long id;
 	private String name;
 	@Column(name = "card_number")
@@ -30,7 +34,7 @@ public class Card {
     	super();
     }
     
-    public Card(String name, String number, LocalDate expiry, int cvv) {
+	public Card(String name, String number, LocalDate expiry, int cvv) {
 		super();
 		this.name = name;
 		this.number = number;
@@ -82,6 +86,5 @@ public class Card {
 	@Override
 	public String toString() {
 		return "Card [id=" + id + ", name=" + name + ", number=" + number + ", expiry=" + expiry + ", cvv=" + cvv + "]";
-	}
-	
+	}	
 }

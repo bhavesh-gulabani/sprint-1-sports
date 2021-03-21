@@ -10,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cg.bean.Order;
+import com.cg.bean.Product;
 import com.cg.dao.IOrderRepository;
 
 @Service
+@Transactional
 public class OrderServiceImpl implements IOrderService {
 
 	@Autowired
@@ -54,7 +56,7 @@ public class OrderServiceImpl implements IOrderService {
 		return updateOrder(order);
 	}
 	
-	@Transactional
+	// Method that handles business logic for calculating the total order amount
 	@Override
 	public Order computeTotalAmount(Order order) {
 		Map<Integer, Integer> cart = order.getCart();
@@ -73,6 +75,35 @@ public class OrderServiceImpl implements IOrderService {
 					productService.getProduct(productId).getPriceAfterDiscount() * cart.get(productId);
 
 		order.setAmount(totalAmount);
+		return order;
+	}
+	
+	// Method that handles business logic for reducing the stock of products
+	// which have been bought in the current order
+	@Override
+	public Order confirmOrder(Order order) {
+		
+		Map<Integer, Integer> cart = order.getCart();
+		int productQuantity = 0;
+		Product product = null;
+		
+		if (cart == null)
+			return order;
+		
+		for (Integer productId : cart.keySet()) {
+			
+			// Get the product
+			product = productService.getProduct(productId);
+			
+			// Get the quantity of the current product 
+			productQuantity = cart.get(productId);
+			
+			// Subtract the current product stock from the quantity bought and set the new stock
+			product.setStock(product.getStock() - productQuantity);
+			
+			// Update the product in the database
+			productService.updateProduct(product);
+		}
 		return order;
 	}
 }

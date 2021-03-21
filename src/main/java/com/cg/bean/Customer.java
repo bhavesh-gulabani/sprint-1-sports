@@ -7,7 +7,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
@@ -31,7 +30,8 @@ public class Customer extends User {
 	private Address address;
 	
 	// Bidirectional one-to-many (Inverse side)
-	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+	@JsonManagedReference(value = "customerReference")
 	private Set<Order> orders = new HashSet<>();
 	
 	// Constructors
@@ -39,27 +39,16 @@ public class Customer extends User {
 		super();
 	}
 	
-	public Customer(String name, String email, String contactNo, LocalDate dateOfBirth, Address address,
-			Set<Order> orders) {
-		super();
+	public Customer(String username, String password, String role, @NotBlank String name,
+			@Email(message = "Email should be valid") String email, String contactNo, LocalDate dateOfBirth,
+			Address address, Set<Order> orders) {
+		super(username, password, role);
 		this.name = name;
 		this.email = email;
 		this.contactNo = contactNo;
 		this.dateOfBirth = dateOfBirth;
 		this.address = address;
 		this.orders = orders;
-	}
-
-	public Customer(String username, String password, String role, String name, String email) {
-		super(username, password, role);
-		this.name = name;
-		this.email = email;
-	}
-	
-	public Customer(String name, String email) {
-		super();
-		this.name = name;
-		this.email = email;
 	}
 
 	// Getters and Setters
@@ -90,8 +79,8 @@ public class Customer extends User {
 	public LocalDate getDateOfBirth() {
 		return dateOfBirth;
 	}
-
-	public void setDob(LocalDate dateOfBirth) {
+	
+	public void setDateOfBirth(LocalDate dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
 	}
 
@@ -103,7 +92,6 @@ public class Customer extends User {
 		this.address = address;
 	}
 	
-	@JsonManagedReference(value = "customerReference")
 	public Set<Order> getOrders() {
 		return orders;
 	}
@@ -112,21 +100,9 @@ public class Customer extends User {
 		this.orders = orders;
 	}
 
-	public void setDateOfBirth(LocalDate dateOfBirth) {
-		this.dateOfBirth = dateOfBirth;
-	}
-	
-	// To add order to the customer
-	// Also serves the purpose to avoid cyclic references 
-	public void addOrder(Order order) {
-		order.setCustomer(this);				// To avoid nested cascade
-		this.getOrders().add(order);
-	}
-
 	@Override
 	public String toString() {
 		return "Customer [name=" + name + ", email=" + email + ", contactNo=" + contactNo + ", dateOfBirth="
 				+ dateOfBirth + ", address=" + address + ", orders=" + orders + "]";
 	}
-
 }

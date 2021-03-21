@@ -2,29 +2,33 @@ package com.cg.bean;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+//For generating values of payment id
+@SequenceGenerator(name = "paymentSequence", initialValue = 401, allocationSize = 1)
 
 @Entity
 @Table(name = "System_payment")
 public class Payment {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "paymentSequence")
 	private long id;
 	private String type;
 	private String status;
 	
-	// Bi-directional One-to-One (Inverse side)
-	@OneToOne(mappedBy = "payment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	// Bidirectional one-to-one (Inverse side)
+	@OneToOne(mappedBy = "payment", cascade = CascadeType.ALL)
+	@JsonManagedReference(value = "paymentReference")
 	private Order order;
 	
-	// Unidirectional one-to-one
+	// Unidirectional one-to-one(Owning side)
 	@OneToOne(cascade = CascadeType.ALL)
 	private Card card;
 	
@@ -33,10 +37,11 @@ public class Payment {
 		super();
 	}
 	
-	public Payment(String type, String status, Card card) {
+	public Payment(String type, String status, Order order, Card card) {
 		super();
 		this.type = type;
 		this.status = status;
+		this.order = order;
 		this.card = card;
 	}
 
@@ -73,7 +78,6 @@ public class Payment {
 		this.card = card;
 	}
 
-	@JsonManagedReference(value = "paymentReference")
 	public Order getOrder() {
 		return order;
 	}
@@ -82,12 +86,9 @@ public class Payment {
 		this.order = order;
 	}
 
-	// toString
 	@Override
 	public String toString() {
-		return "Payment [id=" + id + ", type=" + type + ", status=" + status + ", card=" + card + "]";
+		return "Payment [id=" + id + ", type=" + type + ", status=" + status + ", order=" + order + ", card=" + card
+				+ "]";
 	}
-
-	
-	
 }

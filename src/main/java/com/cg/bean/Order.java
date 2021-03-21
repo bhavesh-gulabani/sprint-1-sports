@@ -1,20 +1,12 @@
-// Best approach : 
-//	In one order, how many products are ordered?
-//	Map<Integer, Product> ProductId -> ProductObject
-//							(key)		(value)
-// quantity as a single variable for every product
-// Inside product class, quantity will be a field
-
-
-//	@CollectionTable(name="Product_Quantity", joinColumns=@JoinColumn(name="product_qty"))
-//	@Column(name="student_name")
 package com.cg.bean;
 
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,17 +14,22 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+//For generating values of order id
+@SequenceGenerator(name = "orderSequence", initialValue = 301, allocationSize = 1)
+
 @Entity
 @Table(name = "System_order")
 public class Order {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "orderSequence")
 	private long id;
 	private double amount;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
@@ -40,21 +37,25 @@ public class Order {
 	
 	// Cart will contain the productId -> quantity for that product
 	// Then based on that cart, we can calculate the total amount for the order
-	@CollectionTable(name="System_Order_Cart")
 	@ElementCollection
+	@CollectionTable(name = "System_Order_Cart")
+	@MapKeyColumn(name = "product_id")
+    @Column(name = "quantity")
 	Map<Integer, Integer> cart = new HashMap<>();
 	
-	// We can get product details from productId the key of the map,
-	// and we can perform operations
+	// We can get product details from the productId which is the key of the map,
+	// and we can perform operations using that product
 	
 	// Bidirectional many-to-one (Owning side)
 	@ManyToOne
 	@JoinColumn(name = "customer_id")
+	@JsonBackReference(value = "customerReference")
 	private Customer customer;
 	
 	// Bidirectional one-to-one (Owning side)
 	@OneToOne
 	@JoinColumn(name = "payment_id")
+	@JsonBackReference(value = "paymentReference")
 	private Payment payment;
 
 	// Constructors
@@ -62,7 +63,8 @@ public class Order {
 		super();
 	}
 	
-	public Order(double amount, LocalDate billingDate, Map<Integer, Integer> cart, Customer customer, Payment payment) {
+	public Order(double amount, LocalDate billingDate, Map<Integer, Integer> cart, Customer customer,
+			Payment payment) {
 		super();
 		this.amount = amount;
 		this.billingDate = billingDate;
@@ -104,7 +106,6 @@ public class Order {
 		this.billingDate = billingDate;
 	}
 
-	@JsonBackReference(value = "customerReference")
 	public Customer getCustomer() {
 		return customer;
 	}
@@ -113,7 +114,6 @@ public class Order {
 		this.customer = customer;
 	}
 
-	@JsonBackReference(value = "paymentReference")
 	public Payment getPayment() {
 		return payment;
 	}
@@ -127,5 +127,4 @@ public class Order {
 		return "Order [id=" + id + ", amount=" + amount + ", billingDate=" + billingDate + ", cart=" + cart
 				+ ", customer=" + customer + ", payment=" + payment + "]";
 	}
-
 }
