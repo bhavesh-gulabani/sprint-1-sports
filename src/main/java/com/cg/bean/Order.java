@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -63,6 +62,17 @@ public class Order {
 		super();
 	}
 	
+	public Order(long id, double amount, LocalDate billingDate, Map<Integer, Integer> cart, Customer customer,
+			Payment payment) {
+		super();
+		this.id = id;
+		this.amount = amount;
+		this.billingDate = billingDate;
+		this.cart = cart;
+		this.customer = customer;
+		this.payment = payment;
+	}
+
 	public Order(double amount, LocalDate billingDate, Map<Integer, Integer> cart, Customer customer,
 			Payment payment) {
 		super();

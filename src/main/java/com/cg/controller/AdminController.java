@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cg.bean.Customer;
 import com.cg.bean.Product;
-import com.cg.exception.CustomerNotFoundException;
+import com.cg.exception.ResourceNotFoundException;
 import com.cg.service.ICustomerService;
 import com.cg.service.IProductService;
 
@@ -40,7 +40,7 @@ public class AdminController {
 	// WORKING
 	// Get a single customer by id
 	@GetMapping("/customers/{id}")
-	public ResponseEntity<Customer> getCustomer(@PathVariable Integer id) throws CustomerNotFoundException { 
+	public ResponseEntity<Customer> getCustomer(@PathVariable Integer id) throws ResourceNotFoundException { 
 		return new ResponseEntity<>(customerService.getCustomer(id), HttpStatus.OK);
 	}
 	

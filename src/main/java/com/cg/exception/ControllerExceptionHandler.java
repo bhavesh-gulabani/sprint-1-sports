@@ -15,10 +15,10 @@ import com.cg.util.ErrorDetail;
 
 @ControllerAdvice
 public class ControllerExceptionHandler {
-
+	
 	@ResponseBody
-	@ExceptionHandler(CustomerNotFoundException.class)
-	ResponseEntity<?> exceptionHandler(CustomerNotFoundException ex, WebRequest request) {
+	@ExceptionHandler(ResourceNotFoundException.class)
+	ResponseEntity<?> resourceExceptionHandler(ResourceNotFoundException ex, WebRequest request) {
 		ErrorDetail errorDetail = new ErrorDetail(new Date(), ex.getMessage(), request.getDescription(false));
 		return new ResponseEntity<>(errorDetail, HttpStatus.NOT_FOUND);
 	}
