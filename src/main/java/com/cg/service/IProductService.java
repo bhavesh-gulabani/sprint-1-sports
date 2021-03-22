@@ -22,5 +22,6 @@ public interface IProductService {
 	public List<Product> getProductsBySize(String size) throws ProductNotFoundException;
 	public List<Product> getProductsByMrp(double mrp) throws ProductNotFoundException;
 	public List<Product> getProductsByColor(String color) throws ProductNotFoundException;
+	public List<Product> getbyCategory(String categoryName);
 	
 }

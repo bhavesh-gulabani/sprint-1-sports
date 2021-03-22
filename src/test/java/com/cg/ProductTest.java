@@ -40,10 +40,8 @@ class ProductTest {
 	
 	List<Product> prodList;
 	Product prod1,prod2,prod3,prod4;
-	//for getby methods
-	List<Product>blackProdList, telstarProdList, sizeLProdList, priceProdList; 
-	
-	
+	//for getBy methods
+	List<Product>blackProdList, telstarProdList, sizeLProdList, priceProdList, footballProds; 	
 	
    @SuppressWarnings("deprecation")
    @Before(value = "")
@@ -77,8 +75,6 @@ class ProductTest {
 		prodList.add(prod3);
 		prodList.add(prod4);
 		
-		
-		
 		//List of Products Named Telstar
 		telstarProdList = new ArrayList<>();
 		telstarProdList.add(prod3);
@@ -98,6 +94,11 @@ class ProductTest {
 		blackProdList = new ArrayList<>();
 		blackProdList.add(prod1);
 		blackProdList.add(prod4);
+		
+		//List of products with category Football
+		footballProds = new ArrayList<>();
+		footballProds.add(prod3);
+		footballProds.add(prod4);
 	}
 
 	@AfterEach
@@ -157,6 +158,12 @@ class ProductTest {
 	public void getProductsByColor() throws ProductNotFoundException {		
 		when(prodRepo.findAllByColor("Black")).thenReturn(blackProdList);
 		Assertions.assertEquals(blackProdList, prodService.getProductsByColor("Black"));
+	}
+	
+	@Test
+	public void getbyCategory() {		
+		when(prodRepo.findAllByCategory("Football")).thenReturn(footballProds);
+		Assertions.assertEquals(footballProds, prodService.getbyCategory("Football"));
 	}
 	
 	

@@ -30,8 +30,6 @@ public class ProductController  {
 
 @Autowired
 private IProductService productService;
-	
-
 
 @PostMapping("/add")
 public ResponseEntity<Product> addProduct(@RequestBody Product product) throws IncorrectPriceException{

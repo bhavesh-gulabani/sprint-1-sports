@@ -32,8 +32,7 @@ public class CustomerServiceImpl implements ICustomerService {
 	public Customer updateCustomer(Customer customer) throws CustomerNotFoundException {
 		Optional<Customer> customerOptional = customerRepository.findById(customer.getId());
 		if (customerOptional.isEmpty())
-			throw new CustomerNotFoundException("Customer details not found");
-			
+			throw new CustomerNotFoundException("Customer details not found");			
 		return customerRepository.save(customer); 
 	}
 

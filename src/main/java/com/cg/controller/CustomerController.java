@@ -1,6 +1,9 @@
 package com.cg.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -22,7 +25,10 @@ import com.cg.bean.Customer;
 import com.cg.bean.Product;
 import com.cg.bean.User;
 import com.cg.exception.CustomerNotFoundException;
+import com.cg.exception.EmptyInventoryException;
+import com.cg.exception.ProductNotFoundException;
 import com.cg.service.ICustomerService;
+import com.cg.service.IProductService;
 import com.cg.service.IUserService;
 
 @RestController
@@ -34,6 +40,9 @@ public class CustomerController {
 	
 	@Autowired
 	IUserService userService;
+	
+	@Autowired
+	IProductService productService;
 	
 	// WORKING --
 	// Register a new customer 
@@ -71,8 +80,40 @@ public class CustomerController {
 	}
 	//-------------------------------------------------------------------------------------------------------------------
 	
-	@GetMapping
-	public ResponseEntity<List<Product>> getCategories(){
-		return null;
+	@GetMapping("/catalogue")
+	public ResponseEntity<List<Product>> getAllProducts() throws EmptyInventoryException{
+		return new ResponseEntity<>(productService.getAllProducts(), HttpStatus.OK);
+	}
+	
+	@GetMapping("/productcategory/{categoryName}")
+	public ResponseEntity<List<Product>>getbyCategory(@PathVariable String categoryName) {
+		List<Product> categoryList = productService.getbyCategory(categoryName);
+		return new ResponseEntity<List<Product>>(categoryList, HttpStatus.OK);
+	}
+	@GetMapping("/productcategory/{categoryName}/getByName/{productName}")
+	public ResponseEntity<List<Product>>getByName(@PathVariable String categoryName, @PathVariable String productName) throws ProductNotFoundException{
+		List<Product> categoryList = productService.getbyCategory(categoryName);
+		List<Product> resultList = categoryList.stream().filter(p->p.getName().equalsIgnoreCase(productName)).collect(Collectors.toList());
+		return new ResponseEntity<List<Product>>(resultList, HttpStatus.OK);
+	}
+
+	@GetMapping("/productcategory/{categoryName}/getBySize/{size}")
+	public ResponseEntity<List<Product>>getBySize(@PathVariable String categoryName, @PathVariable String size) throws ProductNotFoundException{
+		List<Product> categoryList = productService.getbyCategory(categoryName);
+		List<Product> resultList = categoryList.stream().filter(p->p.getSize().equalsIgnoreCase(size)).collect(Collectors.toList());
+		return new ResponseEntity<List<Product>>(resultList, HttpStatus.OK);
+	}
+
+	@GetMapping("/productcategory/{categoryName}/getByPrice/{mrp}")
+	public ResponseEntity<List<Product>>getByPrice(@PathVariable String categoryName, @PathVariable double mrp) throws ProductNotFoundException{
+		List<Product> categoryList = productService.getbyCategory(categoryName);
+		List<Product> resultList = categoryList.stream().filter(p->p.getMrp()==mrp).collect(Collectors.toList());
+		return new ResponseEntity<List<Product>>(resultList, HttpStatus.OK);
+	}
+	@GetMapping("/productcategory/{categoryName}/getByColor/{color}")
+	public ResponseEntity<List<Product>>getByColor(@PathVariable String categoryName, @PathVariable String color) throws ProductNotFoundException{
+		List<Product> categoryList = productService.getbyCategory(categoryName);
+		List<Product> resultList = categoryList.stream().filter(p->p.getColor().equalsIgnoreCase(color)).collect(Collectors.toList());
+		return new ResponseEntity<List<Product>>(resultList, HttpStatus.OK);
 	}
 }

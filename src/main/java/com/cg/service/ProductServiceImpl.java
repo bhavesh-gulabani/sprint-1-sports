@@ -1,7 +1,8 @@
 package com.cg.service; 
 
 import java.util.List;
-import java.util.Optional; 
+
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import com.cg.exception.IncorrectPriceException;
 import com.cg.exception.ProductNotFoundException;
 
 @Service
+@Transactional
 public class ProductServiceImpl implements IProductService {
 	
 	@Autowired
@@ -64,8 +66,6 @@ public class ProductServiceImpl implements IProductService {
 			 throw new ProductNotFoundException("No such Product !!");
 		else return prodRepo.findAllByName(name);
 	}
-
-
 	
 	@Override
 	public List<Product> getProductsBySize(String size)  throws ProductNotFoundException {
@@ -88,5 +88,10 @@ public class ProductServiceImpl implements IProductService {
 		return prodRepo.findAllByColor(color);
 	}
 
+	@Override
+	public List<Product> getbyCategory(String categoryName) {
+		return prodRepo.findAllByCategory(categoryName);		
+	}
 
+	
 }
