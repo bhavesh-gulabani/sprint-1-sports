@@ -1,17 +1,11 @@
 package com.cg.dao;
 
-import java.util.List;
-
+import org.springframework.data.repository.CrudRepository;
 import com.cg.bean.Product;
 
-public interface IProductRepository {
-	public Product addProdct(Product product);
-	public Product removeProduct(long id);
-	public Product updateProduct(long id, Product product);
-	public Product getProduct(long id);
-	public List<Product> getAllProduct();
-	public List<Product> getProductsByName();
-	public List<Product> getProductsBySize();
-	public List<Product> getProductsByPrice();
-	public List<Product> getProductsByColor();
+public interface IProductRepository extends CrudRepository<Product, Long>{
+	Iterable<Product> findAllByName(String name);
+	Iterable<Product> findAllBySize(String size);
+	Iterable<Product> findAllByPriceAfterDiscount(double price);
+	Iterable<Product> findAllByColor(String color);
 }

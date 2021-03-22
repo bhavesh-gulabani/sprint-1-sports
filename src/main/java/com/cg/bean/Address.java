@@ -1,18 +1,15 @@
 package com.cg.bean;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.Embeddable;
+import javax.validation.constraints.Size;
 
-@Entity
+@Embeddable
 public class Address {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int addressId;
 	private String doorNo;
+	@Size(min = 5, max = 20, message = "Street should be between 5 to 30 characters")
 	private String street;
+	@Size(min = 5, max = 15, message = "Area should be between 5 to 15 characters")
 	private String area;
 	private String city;
 	private String state;
@@ -22,8 +19,11 @@ public class Address {
 	public Address() {
 		super();
 	}
-	
-	public Address(String doorNo, String street, String area, String city, String state, int pincode) {
+
+	public Address(String doorNo,
+			@Size(min = 5, max = 20, message = "Street should be between 5 to 30 characters") String street,
+			@Size(min = 5, max = 15, message = "Area should be between 5 to 15 characters") String area, String city,
+			String state, int pincode) {
 		super();
 		this.doorNo = doorNo;
 		this.street = street;
@@ -32,7 +32,7 @@ public class Address {
 		this.state = state;
 		this.pincode = pincode;
 	}
-	
+
 	// Getters and Setters
 	public String getDoorNo() {
 		return doorNo;
@@ -82,7 +82,6 @@ public class Address {
 		this.pincode = pincode;
 	}
 
-	// toString
 	@Override
 	public String toString() {
 		return "Address [doorNo=" + doorNo + ", street=" + street + ", area=" + area + ", city=" + city + ", state="

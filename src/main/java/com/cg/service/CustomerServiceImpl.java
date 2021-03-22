@@ -3,41 +3,46 @@ package com.cg.service;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cg.bean.Customer;
 import com.cg.dao.ICustomerRepository;
+import com.cg.exception.CustomerNotFoundException;
 
 @Service
+@Transactional
 public class CustomerServiceImpl implements ICustomerService {
 
 	@Autowired
-	ICustomerRepository customerRepo;
+	ICustomerRepository customerRepository;
 	
 	public Customer addCustomer(Customer customer) {
-		return customerRepo.save(customer);
+		return customerRepository.save(customer);
 	}
-
-	public Customer removeCustomer(long custId) {
-		Customer customerToBeRemoved = getCustomer(custId);
-		customerRepo.deleteById(custId);
+	
+	public Customer removeCustomer(long id) throws CustomerNotFoundException {
+		Customer customerToBeRemoved = getCustomer(id);
+		customerRepository.deleteById(id);
 		return customerToBeRemoved;
-		
 	}
 
-	public Customer updateCustomer(long custId, Customer customer) {
-		return customerRepo.save(customer);
+	public Customer updateCustomer(Customer customer) throws CustomerNotFoundException {
+		Optional<Customer> customerOptional = customerRepository.findById(customer.getId());
+		if (customerOptional.isEmpty())
+			throw new CustomerNotFoundException("Customer details not found");
+			
+		return customerRepository.save(customer); 
 	}
 
-	public Customer getCustomer(long userId) {
-		Optional<Customer> custOptional = customerRepo.findById(userId);
-		return custOptional.isEmpty() ? null : custOptional.get();
+	public Customer getCustomer(long userId) throws CustomerNotFoundException {
+		Optional<Customer> custOptional = customerRepository.findById(userId);
+		return custOptional.orElseThrow(() -> new CustomerNotFoundException("Customer details not found"));
 	}
 
 	public List<Customer> getAllCustomers() {
-		List<Customer> customerList = (List<Customer>) customerRepo.findAll();
-		return customerList;
+		return (List<Customer>) customerRepository.findAll();
 	}
-
 }
