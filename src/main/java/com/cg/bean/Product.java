@@ -36,6 +36,22 @@ public class Product {
 		super();
 	}
 	
+	public Product(long id, String name, String category, String description, String brand, String color, String size,
+			double mrp, int discount, int stock, LocalDate estimatedDelivery) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.category = category;
+		this.description = description;
+		this.brand = brand;
+		this.color = color;
+		this.size = size;
+		this.mrp = mrp;
+		this.discount = discount;
+		this.stock = stock;
+		this.estimatedDelivery = estimatedDelivery;
+	}
+
 	public Product(String name, String category, String description, String brand, String color, String size,
 			double mrp, int discount, int stock, LocalDate estimatedDelivery) {
 		super();

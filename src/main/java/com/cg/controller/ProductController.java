@@ -41,7 +41,7 @@ public ResponseEntity<Product> addProduct(@RequestBody Product product) throws I
 
 @GetMapping("/getall")
 public ResponseEntity<List<Product>>getAllProd() throws EmptyInventoryException{
-	List <Product>productList= productService.getAllProduct();
+	List <Product>productList= productService.getAllProducts();
 	return new ResponseEntity<List<Product>>(productList, HttpStatus.OK); 
 	}
 
@@ -63,26 +63,26 @@ public ResponseEntity<Product> updateProduct(@RequestBody Product product) throw
 }
 
 @GetMapping("/getbyname/{name}")
-public ResponseEntity<List<Optional<Product>>>getByName(@PathVariable String name) throws ProductNotFoundException{
-	List<Optional<Product>> product = productService.getProductsByName(name);
-	return new ResponseEntity<List<Optional<Product>>>(product, HttpStatus.OK);
+public ResponseEntity<List<Product>>getByName(@PathVariable String name) throws ProductNotFoundException{
+	List<Product> product = productService.getProductsByName(name);
+	return new ResponseEntity<List<Product>>(product, HttpStatus.OK);
 }
 
 @GetMapping("/getbysize/{size}")
-public ResponseEntity<List<Optional<Product>>>getBySize(@PathVariable String size) throws ProductNotFoundException{
-	List<Optional<Product>> product = productService.getProductsBySize(size);
-	return new ResponseEntity<List<Optional<Product>>>(product, HttpStatus.OK);
+public ResponseEntity<List<Product>>getBySize(@PathVariable String size) throws ProductNotFoundException{
+	List<Product> product = productService.getProductsBySize(size);
+	return new ResponseEntity<List<Product>>(product, HttpStatus.OK);
 }
 
 @GetMapping("/getbyprice/{mrp}")
-public ResponseEntity<List<Optional<Product>>>getByPrice(@PathVariable double mrp) throws ProductNotFoundException{
-	List<Optional<Product>> product = productService.getProductsByMrp(mrp);
-	return new ResponseEntity<List<Optional<Product>>>(product, HttpStatus.OK);
+public ResponseEntity<List<Product>>getByPrice(@PathVariable double mrp) throws ProductNotFoundException{
+	List<Product> product = productService.getProductsByMrp(mrp);
+	return new ResponseEntity<List<Product>>(product, HttpStatus.OK);
 }
 @GetMapping("/getbycolor/{color}")
-public ResponseEntity<List<Optional<Product>>>getByColor(@PathVariable String color) throws ProductNotFoundException{
-	List<Optional<Product>> product = productService.getProductsByColor(color);
-	return new ResponseEntity<List<Optional<Product>>>(product, HttpStatus.OK);
+public ResponseEntity<List<Product>>getByColor(@PathVariable String color) throws ProductNotFoundException{
+	List<Product> product = productService.getProductsByColor(color);
+	return new ResponseEntity<List<Product>>(product, HttpStatus.OK);
 }
 }
 

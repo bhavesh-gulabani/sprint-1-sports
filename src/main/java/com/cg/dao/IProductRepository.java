@@ -11,8 +11,8 @@ import com.cg.bean.Product;
 
 @Repository
 public interface IProductRepository extends JpaRepository<Product, Long> { 
-	 List<Optional<Product>> findAllByName(String name);
-	 List<Optional<Product>> findBySize(String size);
-	 List<Optional<Product>> findByMrp(double mrp);
-	 List<Optional<Product>> findByColor(String color);
+	 List<Product> findAllByName(String name);
+	 List<Product> findAllBySize(String size);
+	 List<Product> findAllByMrp(double mrp);
+	 List<Product> findAllByColor(String color);
 }
