@@ -1,13 +1,12 @@
 package com.cg.dao;
 
-import java.util.List;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 import com.cg.bean.User;
 
-public interface IUserRepository {
-	public User signIn(User user);
-	public User signOut(User user);
-	public User changePassword(long id, User user);
-	public List<User> getAllUsers();
-	public User getUserById(long custId);
+@Repository
+public interface IUserRepository extends CrudRepository<User, Long> {
+
 }
+ 
