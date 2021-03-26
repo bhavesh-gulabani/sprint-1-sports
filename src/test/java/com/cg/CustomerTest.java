@@ -15,9 +15,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -31,6 +29,7 @@ import com.cg.bean.User;
 import com.cg.dao.ICustomerRepository;
 import com.cg.dao.IUserRepository;
 import com.cg.exception.ResourceNotFoundException;
+import com.cg.exception.WrongCredentialsException;
 import com.cg.service.CustomerServiceImpl;
 import com.cg.service.UserServiceImpl;
 
@@ -55,6 +54,7 @@ class CustomerTest {
 	Order order1, order2;
 	Payment payment1;
 	
+	@SuppressWarnings("deprecation")
 	@Before(value = "")
 	public void init() {
 		MockitoAnnotations.initMocks(this);
@@ -86,8 +86,8 @@ class CustomerTest {
 		customerList.add(customer3);
 		
 		orders = new HashSet<>();
-		order1 = new Order(301, 1000, LocalDate.of(2021, 02, 02), null, customer1, null);
-		order2 = new Order(302, 2000, LocalDate.of(2021, 01, 19), null, customer1, null);
+		order1 = new Order(301, 1000, null, customer1, null);
+		order2 = new Order(302, 2000, null, customer1, null);
 		
 		// Linking payment to order
 		payment1 = new Payment("cash", "paid", null, null);
@@ -105,7 +105,7 @@ class CustomerTest {
 	}
 
 	@Test
-	public void getAllCustomersTest() {
+	public void getAllCustomersTest() throws ResourceNotFoundException {
 		when(customerRepo.findAll()).thenReturn(customerList);
 		Assertions.assertEquals(3, customerService.getAllCustomers().size());
 	}
@@ -153,7 +153,7 @@ class CustomerTest {
 	}
 	
 	@Test
-	public void customerSignInTest() {
+	public void customerSignInTest() throws WrongCredentialsException, ResourceNotFoundException {
 		List<User> userList = new ArrayList<>();
 		userList.add(customer1);
 		

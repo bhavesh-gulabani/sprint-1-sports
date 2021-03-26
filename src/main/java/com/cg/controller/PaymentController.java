@@ -19,35 +19,33 @@ import com.cg.service.IPaymentService;
 
 
 @RestController
-@RequestMapping("/payment")
+@RequestMapping("/payments")
 public class PaymentController {
 
 	@Autowired
 	IPaymentService paymentService;
 
-	 
-	@PostMapping("/add")
+	@PostMapping
 	public ResponseEntity<Payment> addPayment(@RequestBody Payment payment) {	
 		return new ResponseEntity<>(paymentService.addPayment(payment), HttpStatus.CREATED);
 	}
-	
 	 
-	@PutMapping("/update")
+	@PutMapping
 	public ResponseEntity<Payment> updatePayment(@RequestBody Payment payment) {
 		return new ResponseEntity<>(paymentService.updatePayment(payment), HttpStatus.OK); 	
 	}
 	
-	@DeleteMapping("/delete/{id}")
+	@DeleteMapping("/{id}")
 	public ResponseEntity<Payment> deletePayment(@PathVariable Integer id) {
 		return new ResponseEntity<>(paymentService.removePayment(id), HttpStatus.OK);	
 	}
 	
-	@GetMapping("/payments")
+	@GetMapping
 	public ResponseEntity<List<Payment>> getPayments() {	
 		return new ResponseEntity<>(paymentService.getAllPaymentDetails(), HttpStatus.OK);
 	}
 	
-	@GetMapping("/payments/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<Payment> getPaymentById(@PathVariable long id) {	
 		return new ResponseEntity<>(paymentService.getPaymentDetails(id), HttpStatus.OK);
 	}

@@ -2,15 +2,18 @@ package com.cg.bean;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "System_admin")
 public class Admin extends User {
+	@NotBlank(message = "Name cannot be blank")
 	private String name;
+	@Email(message = "Invalid email")
 	private String email;
 	private String contactNo;
 	
-	//Constructors
 	public Admin() {
 		super();
 	}
@@ -22,7 +25,6 @@ public class Admin extends User {
 		this.contactNo = contactNo;
 	}
 
-	// Getters and Setters
 	public String getName() {
 		return name;
 	}

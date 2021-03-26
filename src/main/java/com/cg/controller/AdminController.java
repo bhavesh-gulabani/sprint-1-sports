@@ -2,6 +2,8 @@ package com.cg.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,92 +16,122 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cg.bean.Admin;
 import com.cg.bean.Customer;
 import com.cg.bean.Product;
+import com.cg.bean.User;
+import com.cg.exception.EmptyInventoryException;
+import com.cg.exception.IncorrectPriceException;
 import com.cg.exception.ResourceNotFoundException;
+import com.cg.exception.WrongCredentialsException;
+import com.cg.exception.UserAlreadyExistsException;
 import com.cg.service.ICustomerService;
 import com.cg.service.IProductService;
+import com.cg.service.IUserService;
 
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
 
 	@Autowired
+	IUserService userService;
+	
+	@Autowired
 	ICustomerService customerService;
 	
 	@Autowired
 	IProductService productService;
 	
-	// WORKING
-	// Get all customers
+	// Administrator operations =>
+	@PostMapping("/signin")
+	public ResponseEntity<Object> signIn(@RequestBody User user) throws ResourceNotFoundException, WrongCredentialsException {
+		userService.signIn(user);
+		return new ResponseEntity<>(user.getUsername() + " successfully logged in", HttpStatus.OK);
+	}
+
+	@PostMapping("/signout")
+	public ResponseEntity<Object> signOut(@RequestBody User user) {
+		userService.signOut(user);
+		return new ResponseEntity<>(user.getUsername() + " successfully logged out", HttpStatus.OK);
+	}
+	
+	@PostMapping("/register")
+	public ResponseEntity<Admin> addUser(@RequestBody Admin admin)  throws UserAlreadyExistsException, ResourceNotFoundException {	
+		userService.addUser(admin);
+		return new ResponseEntity<Admin>(admin, HttpStatus.CREATED);
+	}
+	 
+	@DeleteMapping("/{id}")
+	public ResponseEntity<User> removeUser(@PathVariable long id) throws ResourceNotFoundException {
+		return new ResponseEntity<>(userService.removeUser(id), HttpStatus.OK);	
+	}
+	 
+	@PutMapping
+	public ResponseEntity<User> updateUser(@Valid @RequestBody Admin admin) throws ResourceNotFoundException {
+		return new ResponseEntity<>(userService.updateUser(admin), HttpStatus.OK); 	
+	}
+	
+	@GetMapping("/users")
+	public ResponseEntity<List<User>> getAllUsers() throws ResourceNotFoundException {	
+		return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+	}
+	
+	// Customer Management =>
 	@GetMapping("/customers")
-	public ResponseEntity<List<Customer>> getCustomers() {	
+	public ResponseEntity<List<Customer>> getCustomers() throws ResourceNotFoundException {	
 		return new ResponseEntity<>(customerService.getAllCustomers(), HttpStatus.OK);
 	}
 	
-	// WORKING
-	// Get a single customer by id
-	@GetMapping("/customers/{id}")
+	@GetMapping("/customers/{id}") 
 	public ResponseEntity<Customer> getCustomer(@PathVariable Integer id) throws ResourceNotFoundException { 
 		return new ResponseEntity<>(customerService.getCustomer(id), HttpStatus.OK);
 	}
 	
-	// WORKING --
-	// Add a product
-	@PostMapping("/products/add")
-	public ResponseEntity<Product> addProduct(@RequestBody Product product) {	
-		return new ResponseEntity<>(productService.addProduct(product), HttpStatus.CREATED);
+	// Product Management =>
+	@PostMapping("/products")
+	public ResponseEntity<Product> addProduct(@RequestBody Product product) throws IncorrectPriceException {
+		productService.addProduct(product);
+		return new ResponseEntity<Product>(product, HttpStatus.CREATED);
 	}
 	
-	// WORKING --
-	// Update product details
-	@PutMapping("/products/update")
-	public ResponseEntity<Product> updateProduct(@RequestBody Product product) {
-		return new ResponseEntity<>(productService.updateProduct(product), HttpStatus.OK); 	
+	@GetMapping("/products") 
+	public ResponseEntity<List<Product>>getAllProd() throws EmptyInventoryException {
+		return new ResponseEntity<List<Product>>(productService.getAllProducts(), HttpStatus.OK); 
 	}
-	
-	// WORKING --
-	// Delete a single product by id
-	@DeleteMapping("/products/delete/{id}")
-	public ResponseEntity<Product> deleteProduct(@PathVariable long id) {
-		return new ResponseEntity<>(productService.removeProduct(id), HttpStatus.OK); 	
-	}
-	
-	// WORKING --
-	// Get a single product by id --
+
 	@GetMapping("/products/{id}")
-	public ResponseEntity<Product> getProductById(@PathVariable long id) {	
-		return new ResponseEntity<>(productService.getProduct(id), HttpStatus.OK);
+	public ResponseEntity<Product>getProductById(@PathVariable long id) throws ResourceNotFoundException {
+		return new ResponseEntity<Product>(productService.getProductById(id), HttpStatus.OK); 
 	}
-	
-	// WORKING -- 
-	// Get all products
-	@GetMapping("/products")
-	public ResponseEntity<List<Product>> getProducts() {	
-		return new ResponseEntity<>(productService.getAllProduct(), HttpStatus.OK);
+
+	@DeleteMapping("/products/{id}")
+	public ResponseEntity<String> deleteProduct(@PathVariable long id) throws ResourceNotFoundException {  
+		return new ResponseEntity<String>(productService.removeProduct(id), HttpStatus.OK); 
+	}	
+
+	@PutMapping("/products")
+	public ResponseEntity<Product> updateProduct(@RequestBody Product product) throws ResourceNotFoundException, IncorrectPriceException {
+		productService.updateProduct(product.getId(), product);
+		return new ResponseEntity<Product>(product, HttpStatus.OK);
 	}
-	
-	// WORKING --
-	@GetMapping("/products/name/{name}")
-	public ResponseEntity<List<Product>> getProductsByName(@PathVariable String name) {	
+
+	@GetMapping("/products/names/{name}") 
+	public ResponseEntity<List<Product>>getByName(@PathVariable String name) throws ResourceNotFoundException {
 		return new ResponseEntity<>(productService.getProductsByName(name), HttpStatus.OK);
 	}
-	
-	// WORKING --
-	@GetMapping("/products/size/{size}")
-	public ResponseEntity<List<Product>> getProductsBySize(@PathVariable String size) {	
+
+	@GetMapping("/products/sizes/{size}")
+	public ResponseEntity<List<Product>>getBySize(@PathVariable String size) throws ResourceNotFoundException {
 		return new ResponseEntity<>(productService.getProductsBySize(size), HttpStatus.OK);
 	}
-	
-	// NOT WORKING -->
-	@GetMapping("/products/price/{price}")
-	public ResponseEntity<List<Product>> getProductsByPrice(@PathVariable double price) {	
-		return new ResponseEntity<>(productService.getProductsByPrice(price), HttpStatus.OK);
+
+	@GetMapping("/products/prices/{price}")
+	public ResponseEntity<List<Product>>getByPrice(@PathVariable double price) throws ResourceNotFoundException {
+		return new ResponseEntity<List<Product>>(productService.getProductsByPrice(price), HttpStatus.OK);
 	}
-	
-	// WORKING --
-	@GetMapping("/products/color/{color}")
-	public ResponseEntity<List<Product>> getProductsByColor(@PathVariable String color) {	
-		return new ResponseEntity<>(productService.getProductsByColor(color), HttpStatus.OK);
+
+	@GetMapping("/products/colors/{color}")
+	public ResponseEntity<List<Product>>getByColor(@PathVariable String color) throws ResourceNotFoundException {
+		return new ResponseEntity<List<Product>>(productService.getProductsByColor(color), HttpStatus.OK);
 	}
 }

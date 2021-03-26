@@ -11,7 +11,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -25,16 +24,14 @@ public class Customer extends User {
 	private String contactNo;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	private  LocalDate dateOfBirth;
-	
 	@Embedded
 	private Address address;
 	
 	// Bidirectional one-to-many (Inverse side)
-	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "customer", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@JsonManagedReference(value = "customerReference")
 	private Set<Order> orders = new HashSet<>();
 	
-	// Constructors
 	public Customer() {
 		super();
 	}
@@ -50,8 +47,7 @@ public class Customer extends User {
 		this.address = address;
 		this.orders = orders;
 	}
-
-	// Getters and Setters
+	
 	public String getName() {
 		return name;
 	}

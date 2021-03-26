@@ -12,7 +12,6 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-//For generating values of card id
 @SequenceGenerator(name = "cardSequence", initialValue = 501, allocationSize = 1)
 
 @Entity
@@ -29,7 +28,6 @@ public class Card {
     private LocalDate expiry;
     private int cvv;
 	
-    // Constructors
     public Card() {
     	super();
     }
@@ -42,7 +40,6 @@ public class Card {
 		this.cvv = cvv;
 	}
 
-	// Getters and Setters
 	public long getId() {
 		return id;
 	}

@@ -18,7 +18,16 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	
-	// Validation =>
+	// https://mvnrepository.com/artifact/io.springfox/springfox-boot-starter
+	implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
+	// https://mvnrepository.com/artifact/io.springfox/springfox-swagger2
+	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '3.0.0'	
+	// https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui
+	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '3.0.0'
+	// https://mvnrepository.com/artifact/io.springfox/springfox-data-rest
+	implementation group: 'io.springfox', name: 'springfox-data-rest', version: '3.0.0'
+	// https://mvnrepository.com/artifact/io.springfox/springfox-bean-validators
+	implementation group: 'io.springfox', name: 'springfox-bean-validators', version: '3.0.0'
 	// https://mvnrepository.com/artifact/javax.validation/validation-api
 	implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
 	// https://mvnrepository.com/artifact/org.hibernate/hibernate-validator

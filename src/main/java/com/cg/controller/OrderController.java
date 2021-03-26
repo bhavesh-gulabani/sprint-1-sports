@@ -15,43 +15,49 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cg.bean.Order;
+import com.cg.exception.IncorrectPriceException;
+import com.cg.exception.NotEnoughStockException;
+import com.cg.exception.ResourceNotFoundException;
 import com.cg.service.IOrderService;
 
 @RestController
-@RequestMapping("/order")
+@RequestMapping("/orders")
 public class OrderController {
 	
 	@Autowired
 	IOrderService orderService;
 	
-	// Add a new order ()
-	@PostMapping("/add")
+	@PostMapping
 	public ResponseEntity<Order> addOrder(@RequestBody Order order) {	
 		return new ResponseEntity<>(orderService.addOrder(order), HttpStatus.CREATED);
 	}
 	
-	@GetMapping("/orders")
+	@GetMapping
 	public ResponseEntity<List<Order>> getOrders() {	
 		return new ResponseEntity<>(orderService.getAllOrders(), HttpStatus.OK);
 	}
-
-	@PutMapping("/update")
-	public ResponseEntity<Order> updateOrder(@RequestBody Order order) {	
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<Order> getOrderById(@PathVariable long id) throws ResourceNotFoundException {	
+		return new ResponseEntity<>(orderService.getOrderDetails(id), HttpStatus.OK);
+	}
+	
+	@PutMapping
+	public ResponseEntity<Order> updateOrder(@RequestBody Order order) throws ResourceNotFoundException {	
 		return new ResponseEntity<>(orderService.updateOrder(order), HttpStatus.OK);
 	}
 	
-	// Controller to handle the payment linking to the order
-	// and confirmation of order
-	@PutMapping("/confirm")
-	public ResponseEntity<Order> confirmOrder(@RequestBody Order order) {	
-		// This will update the product stock in the system
-		orderService.confirmOrder(order); 
-		
-		return new ResponseEntity<>(orderService.updateOrder(order), HttpStatus.OK);
-	}
-	
-	@DeleteMapping("/delete/{id}")
-	public ResponseEntity<Order> deleteOrder(@PathVariable long id) {	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Order> deleteOrder(@PathVariable long id) throws ResourceNotFoundException {	
 		return new ResponseEntity<>(orderService.removeOrder(id), HttpStatus.OK);
 	}
+	
+	// Controller to handle the payment linking to the order and confirmation of order
+	@PutMapping("/confirm")
+	public ResponseEntity<Order> confirmOrder(@RequestBody Order order) throws ResourceNotFoundException, IncorrectPriceException, ResourceNotFoundException, NotEnoughStockException {	
+		// This will update the product stock in the system
+		orderService.confirmOrder(order); 
+		return new ResponseEntity<>(orderService.updateOrder(order), HttpStatus.OK);
+	}
+	
 }

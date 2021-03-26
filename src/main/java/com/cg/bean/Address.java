@@ -7,7 +7,7 @@ import javax.validation.constraints.Size;
 public class Address {
 
 	private String doorNo;
-	@Size(min = 5, max = 20, message = "Street should be between 5 to 30 characters")
+	@Size(min = 5, max = 20, message = "Street should be between 5 to 20 characters")
 	private String street;
 	@Size(min = 5, max = 15, message = "Area should be between 5 to 15 characters")
 	private String area;
@@ -15,7 +15,6 @@ public class Address {
 	private String state;
 	private int pincode;
 	
-	// Constructors
 	public Address() {
 		super();
 	}
@@ -33,7 +32,6 @@ public class Address {
 		this.pincode = pincode;
 	}
 
-	// Getters and Setters
 	public String getDoorNo() {
 		return doorNo;
 	}

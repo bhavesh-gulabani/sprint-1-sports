@@ -8,20 +8,21 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.cg.util.CustomDeserializer;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-//For generating values of order id
 @SequenceGenerator(name = "orderSequence", initialValue = 301, allocationSize = 1)
 
 @Entity
@@ -34,16 +35,13 @@ public class Order {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	private LocalDate billingDate;
 	
-	// Cart will contain the productId -> quantity for that product
+	// Cart will contain the Product -> quantity for that product
 	// Then based on that cart, we can calculate the total amount for the order
-	@ElementCollection
+	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "System_Order_Cart")
-	@MapKeyColumn(name = "product_id")
     @Column(name = "quantity")
-	Map<Integer, Integer> cart = new HashMap<>();
-	
-	// We can get product details from the productId which is the key of the map,
-	// and we can perform operations using that product
+	@JsonDeserialize(keyUsing = CustomDeserializer.class)
+	Map<Product, Integer> cart = new HashMap<>();
 	
 	// Bidirectional many-to-one (Owning side)
 	@ManyToOne
@@ -57,33 +55,30 @@ public class Order {
 	@JsonBackReference(value = "paymentReference")
 	private Payment payment;
 
-	// Constructors
 	public Order() {
 		super();
 	}
 	
-	public Order(long id, double amount, LocalDate billingDate, Map<Integer, Integer> cart, Customer customer,
+	public Order(long id, double amount, Map<Product, Integer> cart, Customer customer,
 			Payment payment) {
 		super();
 		this.id = id;
 		this.amount = amount;
-		this.billingDate = billingDate;
+		this.billingDate = LocalDate.now();
 		this.cart = cart;
 		this.customer = customer;
 		this.payment = payment;
 	}
 
-	public Order(double amount, LocalDate billingDate, Map<Integer, Integer> cart, Customer customer,
-			Payment payment) {
+	public Order(double amount, Map<Product, Integer> cart, Customer customer, Payment payment) {
 		super();
 		this.amount = amount;
-		this.billingDate = billingDate;
+		this.billingDate = LocalDate.now();
 		this.cart = cart;
 		this.customer = customer;
 		this.payment = payment;
 	}
-
-	// Getters and Setters	
+	
 	public long getId() {
 		return id;
 	}
@@ -100,11 +95,11 @@ public class Order {
 		this.amount = amount;
 	}
 	
-	public Map<Integer, Integer> getCart() {
+	public Map<Product, Integer> getCart() {
 		return cart;
 	}
 
-	public void setCart(Map<Integer, Integer> cart) {
+	public void setCart(Map<Product, Integer> cart) {
 		this.cart = cart;
 	}
 

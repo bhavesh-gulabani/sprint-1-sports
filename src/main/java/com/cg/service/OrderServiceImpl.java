@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 import com.cg.bean.Order;
 import com.cg.bean.Product;
 import com.cg.dao.IOrderRepository;
+import com.cg.exception.IncorrectPriceException;
+import com.cg.exception.NotEnoughStockException;
+import com.cg.exception.ResourceNotFoundException;
 
 @Service
 @Transactional
@@ -28,20 +31,23 @@ public class OrderServiceImpl implements IOrderService {
 		return orderRepository.save(order);
 	}
 
-	public Order removeOrder(long id) {
+	public Order removeOrder(long id) throws ResourceNotFoundException {
 		Order orderToBeRemoved = getOrderDetails(id);
 		orderRepository.deleteById(id);
 		return orderToBeRemoved;
 	}
 
-	public Order updateOrder(Order order) {
+	public Order updateOrder(Order order) throws ResourceNotFoundException {
+		getOrderDetails(order.getId());
 		computeTotalAmount(order);
 		return orderRepository.save(order);
 	}	
 
-	public Order getOrderDetails(long id) {
+	public Order getOrderDetails(long id) throws ResourceNotFoundException{
 		Optional<Order> orderOptional = orderRepository.findById(id);
-		return orderOptional.isEmpty() ? null : orderOptional.get();
+		if (orderOptional.isEmpty())
+			throw new ResourceNotFoundException("Order details not found");
+		return orderOptional.get();
 	}
 
 	@Override
@@ -51,7 +57,7 @@ public class OrderServiceImpl implements IOrderService {
 	}
 
 	@Override
-	public Order updateOrder(long id) {
+	public Order updateOrder(long id) throws ResourceNotFoundException{
 		Order order = getOrderDetails(id);
 		return updateOrder(order);
 	}
@@ -59,20 +65,16 @@ public class OrderServiceImpl implements IOrderService {
 	// Method that handles business logic for calculating the total order amount
 	@Override
 	public Order computeTotalAmount(Order order) {
-		Map<Integer, Integer> cart = order.getCart();
+		Map<Product, Integer> cart = order.getCart();
 		double totalAmount = 0;
 		
-		// If no items exist, in the cart then we set the amount to 0
 		if (cart == null) {
 			order.setAmount(totalAmount);
 			return order;
 		}
 			
-		// For every product in the cart, multiply its price by the quantity, 
-		// and add to totalAmount
-		for (Integer productId : cart.keySet())
-			totalAmount += 
-					productService.getProduct(productId).getPriceAfterDiscount() * cart.get(productId);
+		for (Product product : cart.keySet())
+			totalAmount += product.getPriceAfterDiscount() * cart.get(product);
 
 		order.setAmount(totalAmount);
 		return order;
@@ -81,28 +83,22 @@ public class OrderServiceImpl implements IOrderService {
 	// Method that handles business logic for reducing the stock of products
 	// which have been bought in the current order
 	@Override
-	public Order confirmOrder(Order order) {
-		
-		Map<Integer, Integer> cart = order.getCart();
+	public Order confirmOrder(Order order) throws ResourceNotFoundException, IncorrectPriceException, NotEnoughStockException {
+		Map<Product, Integer> cart = order.getCart();
 		int productQuantity = 0;
-		Product product = null;
 		
 		if (cart == null)
 			return order;
 		
-		for (Integer productId : cart.keySet()) {
+		for (Product product : cart.keySet()) {
+			 
+			productQuantity = cart.get(product);
 			
-			// Get the product
-			product = productService.getProduct(productId);
+			if (product.getStock() - productQuantity < 0)
+				throw new NotEnoughStockException("Not enough " + product.getName() + " products in the system");
 			
-			// Get the quantity of the current product 
-			productQuantity = cart.get(productId);
-			
-			// Subtract the current product stock from the quantity bought and set the new stock
-			product.setStock(product.getStock() - productQuantity);
-			
-			// Update the product in the database
-			productService.updateProduct(product);
+			product.setStock(product.getStock() - productQuantity);	
+			productService.updateProduct(product.getId(), product);
 		}
 		return order;
 	}

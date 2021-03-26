@@ -11,7 +11,6 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-//For generating values of payment id
 @SequenceGenerator(name = "paymentSequence", initialValue = 401, allocationSize = 1)
 
 @Entity
@@ -32,7 +31,6 @@ public class Payment {
 	@OneToOne(cascade = CascadeType.ALL)
 	private Card card;
 	
-	// Constructors
 	public Payment() {
 		super();
 	}
@@ -44,8 +42,7 @@ public class Payment {
 		this.order = order;
 		this.card = card;
 	}
-
-	// Getters and Setters	
+	
 	public long getId() {
 		return id;
 	}

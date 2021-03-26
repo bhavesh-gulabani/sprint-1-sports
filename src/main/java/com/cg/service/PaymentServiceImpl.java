@@ -18,6 +18,9 @@ public class PaymentServiceImpl implements IPaymentService {
 	@Autowired
 	IPaymentRepository paymentRepository;
 	
+	@Autowired
+	IUserService userService;
+	
 	@Override
 	public Payment addPayment(Payment payment) {
 		return paymentRepository.save(payment);

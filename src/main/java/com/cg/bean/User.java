@@ -8,8 +8,11 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
-// For generating values of user id (customer and admin)
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 @SequenceGenerator(name = "userSequence", initialValue = 101, allocationSize = 1)
 
 @Entity
@@ -19,11 +22,13 @@ public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "userSequence")
 	private long id;
+	@NotBlank(message = "Username cannot be blank")
 	private String username;
+	@NotBlank(message = "Password cannot be blank")
+	@JsonProperty(access = Access.WRITE_ONLY )
 	private String password;
 	private String role;
 	
-	// Constructors
 	public User() {
 		super();
 	}
@@ -35,7 +40,14 @@ public class User {
 		this.role = role;
 	}
 
-	// Getters and setters
+	public User(long id, String username, String password, String role) {
+		super();
+		this.id = id;
+		this.username = username;
+		this.password = password;
+		this.role = role;
+	}
+
 	public long getId() {
 		return id;
 	}
@@ -72,5 +84,4 @@ public class User {
 	public String toString() {
 		return "User [id=" + id + ", username=" + username + ", password=" + password + ", role=" + role + "]";
 	}
-
 }

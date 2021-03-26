@@ -12,7 +12,6 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-//For generating values of product id
 @SequenceGenerator(name = "productSequence", initialValue = 201, allocationSize = 1)
 
 @Entity
@@ -35,11 +34,27 @@ public class Product {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	private LocalDate estimatedDelivery;
 	
-	// Constructors
 	public Product() {
 		super();
 	}
 	
+	public Product(long id, String name, String category, String description, String brand, String color, String size,
+			double mrp, int discount, int stock, LocalDate estimatedDelivery) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.category = category;
+		this.description = description;
+		this.brand = brand;
+		this.color = color;
+		this.size = size;
+		this.mrp = mrp;
+		this.discount = discount;
+		this.priceAfterDiscount = mrp - ((double)discount * (mrp / 100));
+		this.stock = stock;
+		this.estimatedDelivery = estimatedDelivery;
+	}
+
 	public Product(String name, String category, String description, String brand, String color, String size,
 			double mrp, int discount, int stock, LocalDate estimatedDelivery) {
 		super();
@@ -55,8 +70,7 @@ public class Product {
 		this.stock = stock;
 		this.estimatedDelivery = estimatedDelivery;
 	}
-
-	// Getters and Setters
+	
 	public long getId() {
 		return id;
 	}
@@ -130,12 +144,13 @@ public class Product {
 	}
 
 	public double getPriceAfterDiscount() {
-		priceAfterDiscount = mrp - ((double)discount * (mrp / 100));
-		return priceAfterDiscount;
+		this.priceAfterDiscount = mrp - ((double)discount * (mrp / 100));
+		return this.priceAfterDiscount;
 	}
 
 	public void setPriceAfterDiscount(double priceAfterDiscount) {
 		this.priceAfterDiscount = priceAfterDiscount;
+		this.priceAfterDiscount = mrp - ((double)discount * (mrp / 100));
 	}
 
 	public int getStock() {

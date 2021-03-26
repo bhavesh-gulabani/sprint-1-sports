@@ -15,11 +15,45 @@ import com.cg.util.ErrorDetail;
 
 @ControllerAdvice
 public class ControllerExceptionHandler {
-	
 	@ResponseBody
 	@ExceptionHandler(ResourceNotFoundException.class)
 	ResponseEntity<?> resourceExceptionHandler(ResourceNotFoundException ex, WebRequest request) {
 		ErrorDetail errorDetail = new ErrorDetail(new Date(), ex.getMessage(), request.getDescription(false));
 		return new ResponseEntity<>(errorDetail, HttpStatus.NOT_FOUND);
 	}
+	 
+	@ResponseBody
+	@ExceptionHandler(IncorrectPriceException.class)
+	ResponseEntity<?> IncorrectPriceException(IncorrectPriceException ex, WebRequest request) {
+		ErrorDetail errorDetail = new ErrorDetail(new Date(), ex.getMessage(), request.getDescription(false));
+		return new ResponseEntity<>(errorDetail, HttpStatus.NOT_FOUND);
+	}
+	
+	@ResponseBody
+	@ExceptionHandler(EmptyInventoryException.class)
+	ResponseEntity<?> EmptyInventoryException(EmptyInventoryException ex, WebRequest request) {
+		ErrorDetail errorDetail = new ErrorDetail(new Date(), ex.getMessage(), request.getDescription(false));
+		return new ResponseEntity<>(errorDetail, HttpStatus.NOT_FOUND);
+	}
+	
+	@ResponseBody
+	@ExceptionHandler(UserAlreadyExistsException.class)		
+	ResponseEntity<?> exceptionHandler(UserAlreadyExistsException ex, WebRequest request) {
+		ErrorDetail errorDetail = new ErrorDetail(new Date(), ex.getMessage(), request.getDescription(false));
+		return new ResponseEntity<>(errorDetail, HttpStatus.NOT_FOUND);
+	}
+	
+	@ResponseBody
+	@ExceptionHandler(WrongCredentialsException.class)		
+	ResponseEntity<?> signInExceptionHandler(WrongCredentialsException ex, WebRequest request) {
+		ErrorDetail errorDetail = new ErrorDetail(new Date(), ex.getMessage(), request.getDescription(false));
+		return new ResponseEntity<>(errorDetail, HttpStatus.BAD_REQUEST);
+	}	
+	
+	@ResponseBody
+	@ExceptionHandler(NotEnoughStockException.class)		
+	ResponseEntity<?> lessStockExceptionHandler(NotEnoughStockException ex, WebRequest request) {
+		ErrorDetail errorDetail = new ErrorDetail(new Date(), ex.getMessage(), request.getDescription(false));
+		return new ResponseEntity<>(errorDetail, HttpStatus.BAD_REQUEST);
+	}	
 }
