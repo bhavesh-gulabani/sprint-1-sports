@@ -11,7 +11,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-
+ 
 @SequenceGenerator(name = "productSequence", initialValue = 201, allocationSize = 1)
 
 @Entity
