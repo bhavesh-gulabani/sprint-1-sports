@@ -6,20 +6,29 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
+@SequenceGenerator(name = "userSequence", initialValue = 101, allocationSize = 1)
 
 @Entity
-@Table(name = "System_User")
-@Inheritance(strategy=InheritanceType.JOINED)
+@Table(name = "System_user")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class User {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long userId;
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "userSequence")
+	private long id;
+	@NotBlank(message = "Username cannot be blank")
 	private String username;
+	@NotBlank(message = "Password cannot be blank")
+	@JsonProperty(access = Access.WRITE_ONLY )
 	private String password;
 	private String role;
 	
-	// Constructors
 	public User() {
 		super();
 	}
@@ -31,13 +40,20 @@ public class User {
 		this.role = role;
 	}
 
-	// Getters and setters
-	public long getUserId() {
-		return userId;
+	public User(long id, String username, String password, String role) {
+		super();
+		this.id = id;
+		this.username = username;
+		this.password = password;
+		this.role = role;
 	}
-	
-	public void setUserId(long userId) {
-		this.userId = userId;
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 	
 	public String getUsername() {
@@ -63,11 +79,9 @@ public class User {
 	public void setRole(String role) {
 		this.role = role;
 	}
-		
-	// toString
+
 	@Override
 	public String toString() {
-		return "User [userId=" + userId + ", username=" + username + ", password=" + password + ", role=" + role + "]";
+		return "User [id=" + id + ", username=" + username + ", password=" + password + ", role=" + role + "]";
 	}
-	
 }
