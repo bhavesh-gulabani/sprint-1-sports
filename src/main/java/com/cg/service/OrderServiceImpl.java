@@ -26,8 +26,26 @@ public class OrderServiceImpl implements IOrderService {
 	@Autowired
 	IProductService productService;
 	
-	public Order addOrder(Order order) {
+	@Autowired
+	ICustomerService customerService;
+	
+	@Autowired
+	IPaymentService paymentService;
+	
+	@Autowired
+	ICartService cartService;
+	
+	public Order addOrder(Order order, long customerId) throws ResourceNotFoundException {
+		
+		// customer linked
+		customerService.getCustomer(customerId).addOrder(order);
+		
+		// cart linked
+		order.setCart(customerService.getCustomer(customerId).getCart());
+		
+		// amount calculated
 		computeTotalAmount(order);
+		
 		return orderRepository.save(order);
 	}
 
@@ -37,9 +55,10 @@ public class OrderServiceImpl implements IOrderService {
 		return orderToBeRemoved;
 	}
 
-	public Order updateOrder(Order order) throws ResourceNotFoundException {
-		getOrderDetails(order.getId());
+	public Order updateOrder(Order order, long customerId) throws ResourceNotFoundException {
+		getOrderDetails(order.getId());		// to check if order exists
 		computeTotalAmount(order);
+		customerService.getCustomer(customerId).addOrder(order);
 		return orderRepository.save(order);
 	}	
 
@@ -59,40 +78,27 @@ public class OrderServiceImpl implements IOrderService {
 	@Override
 	public Order updateOrder(long id) throws ResourceNotFoundException{
 		Order order = getOrderDetails(id);
-		return updateOrder(order);
+		return updateOrder(order, order.getCustomer().getId());
 	}
 	
 	// Method that handles business logic for calculating the total order amount
 	@Override
 	public Order computeTotalAmount(Order order) {
-		Map<Product, Integer> cart = order.getCart();
-		double totalAmount = 0;
-		
-		if (cart == null) {
-			order.setAmount(totalAmount);
-			return order;
-		}
-			
-		for (Product product : cart.keySet())
-			totalAmount += product.getPriceAfterDiscount() * cart.get(product);
-
-		order.setAmount(totalAmount);
+		order.setAmount(order.getCart().getTotalAmount());
 		return order;
 	}
 	
-	// Method that handles business logic for reducing the stock of products
-	// which have been bought in the current order
-	@Override
-	public Order confirmOrder(Order order) throws ResourceNotFoundException, IncorrectPriceException, NotEnoughStockException {
-		Map<Product, Integer> cart = order.getCart();
+	
+	public Order updateProductStock(Order order) throws NotEnoughStockException, ResourceNotFoundException, IncorrectPriceException {
+		Map<Product, Integer> items = order.getCart().getItems();
 		int productQuantity = 0;
 		
-		if (cart == null)
+		if (items == null)
 			return order;
 		
-		for (Product product : cart.keySet()) {
+		for (Product product : items.keySet()) {
 			 
-			productQuantity = cart.get(product);
+			productQuantity = items.get(product);
 			
 			if (product.getStock() - productQuantity < 0)
 				throw new NotEnoughStockException("Not enough " + product.getName() + " products in the system");
@@ -100,6 +106,41 @@ public class OrderServiceImpl implements IOrderService {
 			product.setStock(product.getStock() - productQuantity);	
 			productService.updateProduct(product.getId(), product);
 		}
+		return order;	
+	}
+	
+	// Method that handles business logic for reducing the stock of products
+	// which have been bought in the current order
+	@Override
+	public Order completeOrder(long orderId, long customerId, long paymentId) throws ResourceNotFoundException, IncorrectPriceException, NotEnoughStockException {
+		Order order = getOrderDetails(orderId);
+		
+		Order finalOrder = updateProductStock(order);	
+		
+		// Set status to paid
+		paymentService.getPaymentDetails(paymentId).setStatus("Paid");
+		
+		// Link payment to order
+		paymentService.getPaymentDetails(paymentId).addOrder(finalOrder);
+		
+		return updateOrder(order, customerId);
+	}
+	
+	@Override
+	public Order checkProductStock(long id) throws NotEnoughStockException, ResourceNotFoundException {
+		Order order = getOrderDetails(id);
+		Map<Product, Integer> items = order.getCart().getItems();
+		int productQuantity = 0;
+		
+		if (items == null)
+			return order;
+		
+		for (Product product : items.keySet()) {
+			productQuantity = items.get(product);
+			if (product.getStock() - productQuantity < 0)
+				throw new NotEnoughStockException("Not enough " + product.getName() + " products in the system");	
+		}
 		return order;
+		
 	}
 }

@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @SequenceGenerator(name = "productSequence", initialValue = 201, allocationSize = 1)
 
 @Entity
-@Table(name = "System_product")
+@Table(name = "Test_System_product")
 public class Product {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "productSequence")
@@ -31,15 +31,17 @@ public class Product {
 	private int discount;
 	private double priceAfterDiscount;
 	private int stock;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+//	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private LocalDate estimatedDelivery;
+	private String imageUrl;
 	
 	public Product() {
 		super();
 	}
 	
 	public Product(long id, String name, String category, String description, String brand, String color, String size,
-			double mrp, int discount, int stock, LocalDate estimatedDelivery) {
+			double mrp, int discount, int stock, LocalDate estimatedDelivery, String imageUrl) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -53,10 +55,11 @@ public class Product {
 		this.priceAfterDiscount = mrp - ((double)discount * (mrp / 100));
 		this.stock = stock;
 		this.estimatedDelivery = estimatedDelivery;
+		this.imageUrl = imageUrl;
 	}
 
 	public Product(String name, String category, String description, String brand, String color, String size,
-			double mrp, int discount, int stock, LocalDate estimatedDelivery) {
+			double mrp, int discount, int stock, LocalDate estimatedDelivery, String imageUrl) {
 		super();
 		this.name = name;
 		this.category = category;
@@ -69,6 +72,7 @@ public class Product {
 		this.priceAfterDiscount = mrp - ((double)discount * (mrp / 100));
 		this.stock = stock;
 		this.estimatedDelivery = estimatedDelivery;
+		this.imageUrl = imageUrl;
 	}
 	
 	public long getId() {
@@ -168,12 +172,22 @@ public class Product {
 	public void setEstimatedDelivery(LocalDate estimatedDelivery) {
 		this.estimatedDelivery = estimatedDelivery;
 	}
+	
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
 
 	@Override
 	public String toString() {
-		return "Product [id=" + id + ", name=" + name + ", category=" + category + ", description=" + description
+		return "Product : {'id' : '" + id + "', name=" + name + ", category=" + category + ", description=" + description
 				+ ", brand=" + brand + ", color=" + color + ", size=" + size + ", mrp=" + mrp + ", discount=" + discount
 				+ ", priceAfterDiscount=" + priceAfterDiscount + ", stock=" + stock + ", estimatedDelivery="
-				+ estimatedDelivery + "]";
+				+ estimatedDelivery + ", imageUrl=" + imageUrl + "}";
 	}
+
+	
 }

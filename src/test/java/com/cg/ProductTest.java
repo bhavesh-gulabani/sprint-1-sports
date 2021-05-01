@@ -61,13 +61,13 @@ class ProductTest {
 		prodList = new ArrayList<>();
 		
 		 prod1 = new Product(101,"Carbonex-3000","Head Heavy racquet" ,"Badminton Racquets", "Yonex", "Black", "L",
-				3000, 10, 3, LocalDate.of(2021, 03, 25));
+				3000, 10, 3, LocalDate.of(2021, 03, 25), "");
 		 prod2 = new Product(102,"SB-100","Head Light racquet" ,"Badminton Racquets", "Silvers", "Blue", "M",
-				3999, 20, 5, LocalDate.of(2021, 03, 22));
+				3999, 20, 5, LocalDate.of(2021, 03, 22), "");
 		 prod3 = new Product(103,"Telstar","2010 WC football" ,"Football", "Adidas", "Brown", "S",
-				4500, 15, 15, LocalDate.of(2021, 03, 28));
+				4500, 15, 15, LocalDate.of(2021, 03, 28), "");
 		 prod4 = new Product(104,"Telstar","2010 WC football" ,"Football", "Adidas", "Black", "L",
-				4500, 15, 15, LocalDate.of(2021, 03, 28));
+				4500, 15, 15, LocalDate.of(2021, 03, 28), "");
 		
 		prodList.add(prod1);
 		prodList.add(prod2);

@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @SequenceGenerator(name = "cardSequence", initialValue = 501, allocationSize = 1)
 
 @Entity
-@Table(name = "System_card")
+@Table(name = "Test_System_card")
 public class Card {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cardSequence")
@@ -24,7 +24,7 @@ public class Card {
 	@Column(name = "card_number")
 	private String number;
 	
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate expiry;
     private int cvv;
 	

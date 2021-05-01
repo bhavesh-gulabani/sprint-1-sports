@@ -1,7 +1,6 @@
 package com.cg.service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -9,8 +8,10 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.cg.bean.Cart;
 import com.cg.bean.Customer;
 import com.cg.bean.Order;
 import com.cg.bean.Payment;
@@ -23,12 +24,23 @@ import com.cg.exception.ResourceNotFoundException;
 public class CustomerServiceImpl implements ICustomerService {
 
 	@Autowired
+	IUserService userService;
+	
+	@Autowired
+	ICartService cartService;
+	
+	@Autowired
 	ICustomerRepository customerRepository;
 	
 	@Autowired
 	IProductService productService;
 	
+	@Autowired
+	private PasswordEncoder bcryptEncoder;
+	
 	public Customer addCustomer(Customer customer) {
+		// Encrypt the password
+		customer.setPassword(bcryptEncoder.encode(customer.getPassword()));
 		return customerRepository.save(customer);
 	}
 	
@@ -39,7 +51,15 @@ public class CustomerServiceImpl implements ICustomerService {
 	}
 	
 	public Customer updateCustomer(Customer customer) throws ResourceNotFoundException {
-		getCustomer(customer.getId());	// to check whether the customer exists
+		Customer oldCustomer = getCustomer(customer.getId());	// to check whether the customer exists
+		
+		// If passwords have changed, then encrypt the new password
+		if (!(oldCustomer.getPassword().equals(customer.getPassword())))
+			customer.setPassword(bcryptEncoder.encode(customer.getPassword()));
+		
+		// To compute the total amount of cart
+		customer.setCart(cartService.computeTotalAmount(customer.getCart()));
+		
 		return customerRepository.save(customer); 
 	}
 
@@ -84,8 +104,8 @@ public class CustomerServiceImpl implements ICustomerService {
 
 	// To get cart details for a particular customer's order
 	@Override
-	public Map<Product, Integer> getCartDetails(long customerId, long orderId) throws ResourceNotFoundException {
-		return getOrderDetails(customerId, orderId).getCart();
+	public Cart getCartDetails(long customerId) throws ResourceNotFoundException {
+		return getCustomer(customerId).getCart();
 	}
 
 	// To get all products of a specific category by name
@@ -132,4 +152,10 @@ public class CustomerServiceImpl implements ICustomerService {
 				.filter(product -> product.getPriceAfterDiscount() >= minPrice && product.getPriceAfterDiscount() <= maxPrice)
 				.collect(Collectors.toList());
 		}
+
+	@Override
+	public Customer getCustomerByEmail(String email) throws ResourceNotFoundException {
+		long id = userService.getUserByEmail(email).getId();
+		return getCustomer(id);
+	}
 }

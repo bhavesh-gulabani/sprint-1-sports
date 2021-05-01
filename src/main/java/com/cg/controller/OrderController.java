@@ -27,9 +27,10 @@ public class OrderController {
 	@Autowired
 	IOrderService orderService;
 	
-	@PostMapping
-	public ResponseEntity<Order> addOrder(@RequestBody Order order) {	
-		return new ResponseEntity<>(orderService.addOrder(order), HttpStatus.CREATED);
+	
+	@PostMapping("/customer/{customerId}")
+	public ResponseEntity<Order> addOrder(@RequestBody Order order, @PathVariable long customerId) throws ResourceNotFoundException {	
+		return new ResponseEntity<>(orderService.addOrder(order, customerId), HttpStatus.CREATED);
 	}
 	
 	@GetMapping
@@ -42,9 +43,9 @@ public class OrderController {
 		return new ResponseEntity<>(orderService.getOrderDetails(id), HttpStatus.OK);
 	}
 	
-	@PutMapping
-	public ResponseEntity<Order> updateOrder(@RequestBody Order order) throws ResourceNotFoundException {	
-		return new ResponseEntity<>(orderService.updateOrder(order), HttpStatus.OK);
+	@PutMapping("/customer/{customerId}")
+	public ResponseEntity<Order> updateOrder(@RequestBody Order order, @PathVariable long customerId) throws ResourceNotFoundException {	
+		return new ResponseEntity<>(orderService.updateOrder(order, customerId), HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/{id}")
@@ -53,11 +54,15 @@ public class OrderController {
 	}
 	
 	// Controller to handle the payment linking to the order and confirmation of order
-	@PutMapping("/confirm")
-	public ResponseEntity<Order> confirmOrder(@RequestBody Order order) throws ResourceNotFoundException, IncorrectPriceException, ResourceNotFoundException, NotEnoughStockException {	
-		// This will update the product stock in the system
-		orderService.confirmOrder(order); 
-		return new ResponseEntity<>(orderService.updateOrder(order), HttpStatus.OK);
+	@PutMapping("{orderId}/customer/{customerId}/payment/{paymentId}/complete")
+	public ResponseEntity<Order> confirmOrder(@PathVariable long customerId, @PathVariable long paymentId, @PathVariable long orderId) throws ResourceNotFoundException, IncorrectPriceException, ResourceNotFoundException, NotEnoughStockException {	
+		return new ResponseEntity<>(orderService.completeOrder(orderId, customerId, paymentId), HttpStatus.OK);
+	}
+	
+	// Controller to check if product stock is sufficient to proceed with payment
+	@PostMapping("/{id}/confirm")
+	public ResponseEntity<Order> confirmOrder(@PathVariable long id) throws ResourceNotFoundException, IncorrectPriceException, ResourceNotFoundException, NotEnoughStockException {	
+		return new ResponseEntity<>(orderService.checkProductStock(id), HttpStatus.OK);
 	}
 	
 }

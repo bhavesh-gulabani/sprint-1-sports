@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @SequenceGenerator(name = "paymentSequence", initialValue = 401, allocationSize = 1)
 
 @Entity
-@Table(name = "System_payment")
+@Table(name = "Test_System_payment")
 public class Payment {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "paymentSequence")
@@ -23,7 +23,7 @@ public class Payment {
 	private String status;
 	
 	// Bidirectional one-to-one (Inverse side)
-	@OneToOne(mappedBy = "payment", cascade = CascadeType.ALL)
+	@OneToOne(mappedBy = "payment", cascade = {CascadeType.MERGE, CascadeType.REMOVE})
 	@JsonManagedReference(value = "paymentReference")
 	private Order order;
 	
@@ -81,6 +81,16 @@ public class Payment {
 
 	public void setOrder(Order order) {
 		this.order = order;
+	}
+	
+	public void addOrder(Order order) {
+		this.order = order;
+		order.setPayment(this);
+	}
+	
+	public void removeOrder(Order order) {
+		this.order = null;
+		order.setPayment(null);
 	}
 
 	@Override

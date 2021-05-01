@@ -23,8 +23,9 @@ import com.cg.bean.User;
 import com.cg.exception.EmptyInventoryException;
 import com.cg.exception.IncorrectPriceException;
 import com.cg.exception.ResourceNotFoundException;
-import com.cg.exception.WrongCredentialsException;
 import com.cg.exception.UserAlreadyExistsException;
+import com.cg.exception.WrongCredentialsException;
+import com.cg.service.IAdminService;
 import com.cg.service.ICustomerService;
 import com.cg.service.IProductService;
 import com.cg.service.IUserService;
@@ -42,23 +43,23 @@ public class AdminController {
 	@Autowired
 	IProductService productService;
 	
+	@Autowired
+	IAdminService adminService;
+	
 	// Administrator operations =>
 	@PostMapping("/signin")
 	public ResponseEntity<Object> signIn(@RequestBody User user) throws ResourceNotFoundException, WrongCredentialsException {
-		userService.signIn(user);
-		return new ResponseEntity<>(user.getUsername() + " successfully logged in", HttpStatus.OK);
+		return new ResponseEntity<>(userService.signIn(user) + " successfully logged in", HttpStatus.OK);
 	}
 
 	@PostMapping("/signout")
 	public ResponseEntity<Object> signOut(@RequestBody User user) {
-		userService.signOut(user);
-		return new ResponseEntity<>(user.getUsername() + " successfully logged out", HttpStatus.OK);
+		return new ResponseEntity<>(userService.signOut(user) + " successfully logged out", HttpStatus.OK);
 	}
 	
 	@PostMapping("/register")
-	public ResponseEntity<Admin> addUser(@RequestBody Admin admin)  throws UserAlreadyExistsException, ResourceNotFoundException {	
-		userService.addUser(admin);
-		return new ResponseEntity<Admin>(admin, HttpStatus.CREATED);
+	public ResponseEntity<User> addAdmin(@RequestBody Admin admin)  throws UserAlreadyExistsException, ResourceNotFoundException {	
+		return new ResponseEntity<>(adminService.addAdmin(admin), HttpStatus.CREATED);
 	}
 	 
 	@DeleteMapping("/{id}")
@@ -67,8 +68,8 @@ public class AdminController {
 	}
 	 
 	@PutMapping
-	public ResponseEntity<User> updateUser(@Valid @RequestBody Admin admin) throws ResourceNotFoundException {
-		return new ResponseEntity<>(userService.updateUser(admin), HttpStatus.OK); 	
+	public ResponseEntity<User> updateUser(@Valid @RequestBody Admin user) throws ResourceNotFoundException {
+		return new ResponseEntity<>(userService.updateUser(user), HttpStatus.OK); 	
 	}
 	
 	@GetMapping("/users")

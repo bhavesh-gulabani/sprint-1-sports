@@ -4,6 +4,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.cg.bean.Product;
@@ -58,7 +59,7 @@ public class ProductServiceImpl implements IProductService {
 	public List<Product> getAllProducts() throws EmptyInventoryException {
 		if(productRepository.findAll().isEmpty())
 			throw new EmptyInventoryException("The Inventory is Empty! Please add some products first...!");
-		return productRepository.findAll();
+		return productRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
 	}
 
 	@Override

@@ -1,7 +1,6 @@
 package com.cg.controller;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.validation.Valid;
@@ -18,14 +17,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cg.bean.Cart;
 import com.cg.bean.Customer;
 import com.cg.bean.Order;
 import com.cg.bean.Payment;
 import com.cg.bean.Product;
 import com.cg.bean.User;
+import com.cg.exception.EmptyInventoryException;
 import com.cg.exception.ResourceNotFoundException;
 import com.cg.exception.WrongCredentialsException;
-import com.cg.exception.EmptyInventoryException;
+import com.cg.service.ICartService;
 import com.cg.service.ICustomerService;
 import com.cg.service.IProductService;
 import com.cg.service.IUserService;
@@ -42,6 +43,9 @@ public class CustomerController {
 	
 	@Autowired
 	IProductService productService;
+	
+	@Autowired
+	ICartService cartService;
 	 
 	@PostMapping("/register")
 	public ResponseEntity<Customer> registerCustomer(@Valid @RequestBody Customer customer) {	
@@ -50,14 +54,13 @@ public class CustomerController {
 	
 	@PostMapping("/signin")
 	public ResponseEntity<Object> customerSignIn(@RequestBody User user) throws WrongCredentialsException, ResourceNotFoundException {	
-		userService.signIn(user);
-		return new ResponseEntity<>(user.getUsername() + " successfully signed in", HttpStatus.OK);
+		
+		return new ResponseEntity<>(userService.signIn(user) + " successfully signed in", HttpStatus.OK);
 	}
 	
 	@PostMapping("/signout")
 	public ResponseEntity<Object> customerSignOut(@RequestBody User user) {	
-		userService.signOut(user);
-		return new ResponseEntity<>(user.getUsername() + " successfully signed out", HttpStatus.OK);
+		return new ResponseEntity<>(userService.signOut(user) + " successfully signed out", HttpStatus.OK);
 	}
 	 
 	@PutMapping
@@ -69,6 +72,31 @@ public class CustomerController {
 	public ResponseEntity<Customer> deleteCustomer(@PathVariable long id) throws ResourceNotFoundException {
 		return new ResponseEntity<>(customerService.removeCustomer(id), HttpStatus.OK);	
 	}
+	
+	@GetMapping("/{email}") 
+	public ResponseEntity<Customer> getCustomer(@PathVariable String email) throws ResourceNotFoundException { 
+		return new ResponseEntity<>(customerService.getCustomerByEmail(email), HttpStatus.OK);
+	}
+	
+	//------------
+	// Cart =>
+	
+	// To retrieve cart details on icon click
+	@GetMapping("/{id}/cart")
+	public ResponseEntity<Cart> getCartDetails(@PathVariable long id) throws ResourceNotFoundException {
+		return new ResponseEntity<>(customerService.getCustomer(id).getCart(), HttpStatus.OK);
+	}
+	
+//	@PutMapping("/cart")
+//	public ResponseEntity<Cart> updateCartDetails(Customer customer) throws ResourceNotFoundException {
+//		return new ResponseEntity<>(customerService.updateCustomer(customer).getCart(), HttpStatus.OK);
+//	}
+	
+	@PutMapping("/cart")
+	public ResponseEntity<Cart> updateCartDetails(Cart cart) throws ResourceNotFoundException {
+		return new ResponseEntity<>(cartService.updateCart(cart), HttpStatus.OK);
+	}
+	
 	
 	// Product Catalog =>
 	@GetMapping("/products")
@@ -115,11 +143,6 @@ public class CustomerController {
 	@GetMapping("/{customerId}/orders/{orderId}")
 	public ResponseEntity<Order> getOrderDetails(@PathVariable long customerId, @PathVariable long orderId) throws ResourceNotFoundException {
 		return new ResponseEntity<>(customerService.getOrderDetails(customerId, orderId), HttpStatus.OK);
-	}
-	
-	@GetMapping("/{customerId}/orders/{orderId}/cart")
-	public ResponseEntity<Map<Product, Integer>> getCartForOrder(@PathVariable long customerId, @PathVariable long orderId) throws ResourceNotFoundException {
-		return new ResponseEntity<>(customerService.getCartDetails(customerId, orderId), HttpStatus.OK);
 	}
 	
 	@GetMapping("/{customerId}/orders/{orderId}/payments")

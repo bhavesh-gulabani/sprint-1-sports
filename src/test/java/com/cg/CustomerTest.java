@@ -71,24 +71,24 @@ class CustomerTest {
 	@BeforeEach
 	void setUp() throws Exception {
 		customerList = new ArrayList<>();
-		customer1 = new Customer("userjohn", "passjohn", "customer", 
-				"John", "john@gmail.com", "9876543210", LocalDate.of(1989, 02, 02),
-				new Address("D101", "Wakad street", "Wakad", "Pune", "Maharashtra", 123456), null);
-		customer2 = new Customer("userjane", "passjane", "customer", 
-				"Jane", "jane@gmail.com", "01234567890", LocalDate.of(1994, 8, 16),
-				new Address("D102", "Aundh street", "Aundh", "Pune", "Maharashtra", 654321), null);
-		customer3 = new Customer("userdavid", "passdavid", "customer", 
-				"David", "david@gmail.com", "6845321489", LocalDate.of(1998, 4, 18),
-				new Address("D103", "Hinjewadi street", "Hinjewadi", "Pune", "Maharashtra", 564123), null);
-		
+		customer1 = new Customer("john@gmail.com", "passjohn", "customer",
+				"John", "9876543210", LocalDate.of(1989, 02, 02), "",
+				new Address("D101", "Wakad street", "Wakad", "Pune", "Maharashtra", 123456), "Valid", null, null);
+//		customer2 = new Customer("jane@gmail.com", "passjane", "customer", 
+//				"Jane", "01234567890", LocalDate.of(1994, 8, 16),
+//				new Address("D102", "Aundh street", "Aundh", "Pune", "Maharashtra", 654321), null, "", "Valid");
+//		customer3 = new Customer("david@gmail.com", "passdavid", "customer", 
+//				"David", "6845321489", LocalDate.of(1998, 4, 18),
+//				new Address("D103", "Hinjewadi street", "Hinjewadi", "Pune", "Maharashtra", 564123), null, "", "Valid");
+//		
 		customerList.add(customer1);
 		customerList.add(customer2);
 		customerList.add(customer3);
 		
 		orders = new HashSet<>();
-		order1 = new Order(301, 1000, null, customer1, null);
-		order2 = new Order(302, 2000, null, customer1, null);
-		
+//		order1 = new Order(301, 1000, null, customer1, null);
+//		order2 = new Order(302, 2000, null, customer1, null);
+//		
 		// Linking payment to order
 		payment1 = new Payment("cash", "paid", null, null);
 		order1.setPayment(payment1);

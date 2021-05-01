@@ -1,6 +1,8 @@
 package com.cg.util;
 
 import java.io.IOException;
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.cg.bean.Product;
@@ -23,8 +25,23 @@ public class CustomDeserializer extends KeyDeserializer {
 		// Using the string key here to return a real map key object
     	String[] tokens = key.split("'");
     	try {
-			return prodService.getProductById(Long.parseLong(tokens[3]));
-		} catch (ResourceNotFoundException e) {
+    		long productId;
+
+//    		if (tokens.length < 3) {
+//    			System.out.println(key.substring(12, 15));
+//    			productId = Long.parseLong(key.substring(12, 15));
+//    		} else {
+//    			productId = Long.parseLong(tokens[3]);
+//    		}
+    		System.out.println(key);
+    		System.out.println(Arrays.toString(tokens));
+    		
+    		productId = Long.parseLong(tokens[3]);
+    		
+    		System.out.println(productId);
+			return prodService.getProductById(productId);
+    		
+    	} catch (ResourceNotFoundException e) {
 			e.printStackTrace();
 			return null;
 		}
