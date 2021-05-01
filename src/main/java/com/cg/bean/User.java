@@ -8,24 +8,25 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 @SequenceGenerator(name = "userSequence", initialValue = 101, allocationSize = 1)
 
+//@MappedSuperclass
 @Entity
-@Table(name = "System_user")
+@Table(name = "Test_System_user", uniqueConstraints = {
+	      @UniqueConstraint(columnNames = "email", name = "uniqueEmailConstraint")})
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "userSequence")
 	private long id;
-	@NotBlank(message = "Username cannot be blank")
-	private String username;
+	@Email(message = "Invalid email")
+	private String email;
 	@NotBlank(message = "Password cannot be blank")
-	@JsonProperty(access = Access.WRITE_ONLY )
+	//@JsonProperty(access = Access.WRITE_ONLY )
 	private String password;
 	private String role;
 	
@@ -33,17 +34,19 @@ public class User {
 		super();
 	}
 	
-	public User(String username, String password, String role) {
+	public User(long id, @NotBlank(message = "Email cannot be blank") @Email String email,
+			@NotBlank(message = "Password cannot be blank") String password, String role) {
 		super();
-		this.username = username;
+		this.id = id;
+		this.email = email;
 		this.password = password;
 		this.role = role;
 	}
 
-	public User(long id, String username, String password, String role) {
+	public User(@NotBlank(message = "Email cannot be blank") @Email String email,
+			@NotBlank(message = "Password cannot be blank") String password, String role) {
 		super();
-		this.id = id;
-		this.username = username;
+		this.email = email;
 		this.password = password;
 		this.role = role;
 	}
@@ -56,14 +59,14 @@ public class User {
 		this.id = id;
 	}
 	
-	public String getUsername() {
-		return username;
+	public String getEmail() {
+		return email;
 	}
-	
-	public void setUsername(String username) {
-		this.username = username;
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
-	
+
 	public String getPassword() {
 		return password;
 	}
@@ -82,6 +85,6 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", username=" + username + ", password=" + password + ", role=" + role + "]";
-	}
+		return "User [id=" + id + ", email=" + email + ", password=" + password + ", role=" + role + "]";
+	}	
 }

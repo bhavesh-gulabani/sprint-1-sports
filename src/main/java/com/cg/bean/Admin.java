@@ -6,23 +6,24 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 @Entity
-@Table(name = "System_admin")
+@Table(name = "Test_System_admin")
 public class Admin extends User {
 	@NotBlank(message = "Name cannot be blank")
 	private String name;
-	@Email(message = "Invalid email")
-	private String email;
 	private String contactNo;
+	private String imageUrl;
 	
 	public Admin() {
 		super();
 	}
 
-	public Admin(String username, String password, String role, String name, String email, String contactNo) {
-		super(username, password, role);
+	public Admin(@NotBlank(message = "Email cannot be blank") @Email String email,
+			@NotBlank(message = "Password cannot be blank") String password, String role,
+			@NotBlank(message = "Name cannot be blank") String name, String contactNo, String imageUrl) {
+		super(email, password, role);
 		this.name = name;
-		this.email = email;
 		this.contactNo = contactNo;
+		this.imageUrl = imageUrl;
 	}
 
 	public String getName() {
@@ -33,14 +34,6 @@ public class Admin extends User {
 		this.name = name;
 	}
 
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
 	public String getContactNo() {
 		return contactNo;
 	}
@@ -48,10 +41,17 @@ public class Admin extends User {
 	public void setContactNo(String contactNo) {
 		this.contactNo = contactNo;
 	}
+	
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
 
 	@Override
 	public String toString() {
-		return "Admin [name=" + name + ", email=" + email + ", contactNo=" + contactNo + "]";
+		return "Admin [name=" + name + ", contactNo=" + contactNo + ", imageUrl=" + imageUrl + "]";
 	}
-	
 }
